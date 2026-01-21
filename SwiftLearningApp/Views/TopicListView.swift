@@ -88,8 +88,7 @@ struct TopicListView: View {
                             }
                         }
                         .padding(.horizontal)
-                        //.frame(width: 350)
-                        .background(Color.orange)
+                        .frame(width: 350)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.top, 20)
