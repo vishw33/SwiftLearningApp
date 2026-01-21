@@ -1,0 +1,723 @@
+[
+  {
+    "id": "async-basic",
+    "title": "Basic Async Function",
+    "description": "A simple example of an async function that fetches data.",
+    "code": "func fetchUserData() async throws -> User {\n    let url = URL(string: \"https://api.example.com/user\")!\n    let (data, _) = try await URLSession.shared.data(from: url)\n    return try JSONDecoder().decode(User.self, from: data)\n}",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-1",
+        "lineNumber": 1,
+        "text": "Function marked with 'async' can perform asynchronous work",
+        "highlight": true
+      },
+      {
+        "id": "ann-2",
+        "lineNumber": 1,
+        "text": "'throws' allows the function to throw errors",
+        "highlight": false
+      },
+      {
+        "id": "ann-3",
+        "lineNumber": 3,
+        "text": "'await' suspends execution until the network call completes",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "async-await",
+    "isMigrationExample": false
+  },
+  {
+    "id": "migration-callback",
+    "title": "Migrating from Callbacks to Async/Await",
+    "description": "Converting a callback-based function to async/await using continuations.",
+    "code": "// Swift 6: Async/Await version\nfunc fetchData() async throws -> Data {\n    return try await withCheckedThrowingContinuation { continuation in\n        legacyAPICall { result, error in\n            if let error = error {\n                continuation.resume(throwing: error)\n            } else if let result = result {\n                continuation.resume(returning: result)\n            }\n        }\n    }\n}",
+    "language": "swift",
+    "beforeCode": "// Swift 5: Callback version\nfunc fetchData(completion: @escaping (Data?, Error?) -> Void) {\n    legacyAPICall { result, error in\n        completion(result, error)\n    }\n}",
+    "afterCode": "// Swift 6: Async/Await version\nfunc fetchData() async throws -> Data {\n    return try await withCheckedThrowingContinuation { continuation in\n        legacyAPICall { result, error in\n            if let error = error {\n                continuation.resume(throwing: error)\n            } else if let result = result {\n                continuation.resume(returning: result)\n            }\n        }\n    }\n}",
+    "annotations": [
+      {
+        "id": "ann-mig-1",
+        "lineNumber": 2,
+        "text": "withCheckedThrowingContinuation bridges callbacks to async/await",
+        "highlight": true
+      },
+      {
+        "id": "ann-mig-2",
+        "lineNumber": 4,
+        "text": "Resume with error if callback provides one",
+        "highlight": false
+      },
+      {
+        "id": "ann-mig-3",
+        "lineNumber": 6,
+        "text": "Resume with result if successful",
+        "highlight": false
+      }
+    ],
+    "relatedTopicId": "async-await",
+    "isMigrationExample": true
+  },
+  {
+    "id": "task-cancellation",
+    "title": "Task Cancellation",
+    "description": "Properly handling task cancellation in long-running operations.",
+    "code": "func processLargeDataset() async throws {\n    for item in largeDataset {\n        // Check for cancellation\n        try Task.checkCancellation()\n        \n        // Process item\n        await processItem(item)\n    }\n}",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-cancel-1",
+        "lineNumber": 3,
+        "text": "Task.checkCancellation() throws if task was cancelled",
+        "highlight": true
+      },
+      {
+        "id": "ann-cancel-2",
+        "lineNumber": 6,
+        "text": "Tasks also check cancellation at suspension points (await)",
+        "highlight": false
+      }
+    ],
+    "relatedTopicId": "async-await",
+    "isMigrationExample": false
+  },
+  {
+    "id": "actor-await",
+    "title": "Actor Method Calls Require Await",
+    "description": "In Swift 6, all actor method calls require await, even if they don't suspend.",
+    "code": "actor Counter {\n    private var value = 0\n    \n    func getValue() -> Int {\n        return value  // No async, but still requires await from outside\n    }\n    \n    func increment() {\n        value += 1  // Synchronous method\n    }\n}\n\n// Usage:\nlet counter = Counter()\nlet value = await counter.getValue()  // await required!\nawait counter.increment()  // await required!",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-actor-1",
+        "lineNumber": 4,
+        "text": "Method doesn't suspend, but still requires await from outside actor",
+        "highlight": true
+      },
+      {
+        "id": "ann-actor-2",
+        "lineNumber": 13,
+        "text": "All actor method calls require await in Swift 6",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "swift6-migration",
+    "isMigrationExample": false
+  },
+  {
+    "id": "observable-correct",
+    "title": "Correct @Observable Usage",
+    "description": "Proper way to use @Observable in SwiftUI views.",
+    "code": "import SwiftUI\nimport Observation\n\n@Observable\nclass ViewModel {\n    var count: Int = 0\n    var name: String = \"\"\n    \n    func increment() {\n        count += 1\n    }\n}\n\nstruct ContentView: View {\n    @State private var viewModel = ViewModel()  // Use @State, not @StateObject\n    \n    var body: some View {\n        VStack {\n            Text(\"Count: \\(viewModel.count)\")\n            Button(\"Increment\") {\n                viewModel.increment()\n            }\n        }\n    }\n}",
+    "language": "swift",
+    "beforeCode": "// Old way with ObservableObject\nclass ViewModel: ObservableObject {\n    @Published var count: Int = 0\n    @Published var name: String = \"\"\n}\n\nstruct ContentView: View {\n    @StateObject private var viewModel = ViewModel()  // Old way\n    \n    var body: some View {\n        // ...\n    }\n}",
+    "afterCode": "// New way with @Observable\n@Observable\nclass ViewModel {\n    var count: Int = 0  // No @Published needed!\n    var name: String = \"\"\n}\n\nstruct ContentView: View {\n    @State private var viewModel = ViewModel()  // Use @State!\n    \n    var body: some View {\n        // ...\n    }\n}",
+    "annotations": [
+      {
+        "id": "ann-obs-1",
+        "lineNumber": 4,
+        "text": "@Observable macro automatically tracks property changes",
+        "highlight": true
+      },
+      {
+        "id": "ann-obs-2",
+        "lineNumber": 5,
+        "text": "No @Published needed - properties are automatically observed",
+        "highlight": true
+      },
+      {
+        "id": "ann-obs-3",
+        "lineNumber": 14,
+        "text": "Use @State (not @StateObject) with @Observable",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "common-mistakes",
+    "isMigrationExample": true
+  },
+  {
+    "id": "main-actor-performance",
+    "title": "Avoiding Performance Issues with @MainActor",
+    "description": "Don't do heavy computation on @MainActor - move it off the main thread.",
+    "code": "@MainActor\nclass ViewModel {\n    var items: [Item] = []\n    \n    func loadData() async {\n        // BAD: Heavy work on main actor blocks UI\n        // items = processLargeDataset()  // Don't do this!\n        \n        // GOOD: Do work off main actor\n        let processed = await Task.detached {\n            processLargeDataset()  // Runs off main thread\n        }.value\n        \n        // Update UI property on main actor\n        items = processed\n    }\n}",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-perf-1",
+        "lineNumber": 6,
+        "text": "Heavy computation on @MainActor blocks the UI thread",
+        "highlight": true
+      },
+      {
+        "id": "ann-perf-2",
+        "lineNumber": 9,
+        "text": "Task.detached runs work off the main thread",
+        "highlight": true
+      },
+      {
+        "id": "ann-perf-3",
+        "lineNumber": 13,
+        "text": "Update UI properties on @MainActor after work completes",
+        "highlight": false
+      }
+    ],
+    "relatedTopicId": "common-mistakes",
+    "isMigrationExample": false
+  },
+  {
+    "id": "sendable-fix",
+    "title": "Fixing Sendable Violations",
+    "description": "Making a type Sendable to fix concurrency errors.",
+    "code": "// Option 1: Make it a struct (value type)\nstruct DataManager: Sendable {\n    var data: [String]\n}\n\n// Option 2: Use an actor for mutable state\nactor DataManagerActor {\n    private var data: [String] = []\n    \n    func getData() -> [String] {\n        return data\n    }\n    \n    func addData(_ item: String) {\n        data.append(item)\n    }\n}\n\n// Option 3: Mark as @unchecked Sendable (use with caution!)\nfinal class DataManager: @unchecked Sendable {\n    private let queue = DispatchQueue(label: \"data.queue\")\n    private var _data: [String] = []\n    \n    var data: [String] {\n        queue.sync { _data }\n    }\n}",
+    "language": "swift",
+    "beforeCode": "// This causes a Sendable violation\nclass DataManager {\n    var data: [String] = []\n}\n\nfunc process(data: DataManager) async {\n    // Error: 'DataManager' cannot be sent across actors\n}",
+    "afterCode": "// Fixed: Use struct (value type) - preferred\nstruct DataManager: Sendable {\n    var data: [String]\n}\n\n// Or use actor for mutable shared state\nactor DataManagerActor {\n    private var data: [String] = []\n    func getData() -> [String] { return data }\n}",
+    "annotations": [
+      {
+        "id": "ann-send-1",
+        "lineNumber": 2,
+        "text": "Structs are Sendable by default (value types)",
+        "highlight": true
+      },
+      {
+        "id": "ann-send-2",
+        "lineNumber": 6,
+        "text": "Actors are Sendable and provide thread-safe mutable state",
+        "highlight": true
+      },
+      {
+        "id": "ann-send-3",
+        "lineNumber": 18,
+        "text": "@unchecked Sendable requires manual thread safety guarantees",
+        "highlight": false
+      }
+    ],
+    "relatedTopicId": "swift6-migration",
+    "isMigrationExample": true
+  },
+  {
+    "id": "task-group-basic",
+    "title": "Task Groups for Parallel Work",
+    "description": "Using task groups to process multiple items in parallel.",
+    "code": "func processItems(_ items: [Item]) async throws -> [ProcessedItem] {\n    return try await withThrowingTaskGroup(of: ProcessedItem.self) { group in\n        // Add tasks to the group\n        for item in items {\n            group.addTask {\n                return try await processItem(item)\n            }\n        }\n        \n        // Collect results\n        var results: [ProcessedItem] = []\n        for try await result in group {\n            results.append(result)\n        }\n        \n        return results\n    }\n}",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-group-1",
+        "lineNumber": 2,
+        "text": "withThrowingTaskGroup creates a group of child tasks",
+        "highlight": true
+      },
+      {
+        "id": "ann-group-2",
+        "lineNumber": 5,
+        "text": "addTask spawns a child task that runs in parallel",
+        "highlight": true
+      },
+      {
+        "id": "ann-group-3",
+        "lineNumber": 11,
+        "text": "Iterate over group to collect results as they complete",
+        "highlight": false
+      }
+    ],
+    "relatedTopicId": "concurrency",
+    "isMigrationExample": false
+  },
+  {
+    "id": "reentrancy-example",
+    "title": "Actor Reentrancy",
+    "description": "Understanding actor reentrancy - state can change between suspension points.",
+    "code": "actor BankAccount {\n    private var balance: Double = 1000.0\n    \n    func withdraw(_ amount: Double) async throws {\n        // Check balance\n        guard balance >= amount else {\n            throw BankError.insufficientFunds\n        }\n        \n        // Suspension point - other calls can execute here!\n        await processWithdrawal(amount)\n        \n        // Balance might have changed! Need to re-check\n        guard balance >= amount else {\n            throw BankError.insufficientFunds\n        }\n        \n        balance -= amount\n    }\n}",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-reent-1",
+        "lineNumber": 5,
+        "text": "Initial balance check",
+        "highlight": false
+      },
+      {
+        "id": "ann-reent-2",
+        "lineNumber": 9,
+        "text": "Suspension point - actor can process other calls here!",
+        "highlight": true
+      },
+      {
+        "id": "ann-reent-3",
+        "lineNumber": 12,
+        "text": "Re-check balance after suspension - it might have changed!",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "concurrency",
+    "isMigrationExample": false
+  },
+  {
+    "id": "var-let-basic",
+    "title": "Variables vs Constants",
+    "description": "Understanding the difference between var and let in Swift.",
+    "code": "// Variables (var) - can be changed\nvar name = \"Swift\"\nname = \"Swift 6\"  // Allowed\n\n// Constants (let) - cannot be changed\nlet pi = 3.14159\n// pi = 3.14  // Error: Cannot assign to 'let' value\n\n// Best practice: Use let by default\nlet greeting = \"Hello\"  // Preferred\nvar counter = 0  // Only use var when you need to change it",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-var-1",
+        "lineNumber": 2,
+        "text": "var allows reassignment",
+        "highlight": true
+      },
+      {
+        "id": "ann-var-2",
+        "lineNumber": 6,
+        "text": "let prevents reassignment - safer",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "swift-basics",
+    "isMigrationExample": false
+  },
+  {
+    "id": "optionals-example",
+    "title": "Working with Optionals",
+    "description": "Safe optional unwrapping and nil coalescing.",
+    "code": "var name: String? = \"Swift\"\nvar age: Int? = nil\n\n// Optional binding\nif let name = name {\n    print(name)  // name is unwrapped here\n}\n\n// Guard statement\nfunc greet(name: String?) {\n    guard let name = name else {\n        return  // Early exit if nil\n    }\n    print(\"Hello, \\(name)\")\n}\n\n// Nil coalescing\nlet displayName = name ?? \"Unknown\"\nlet userAge = age ?? 0\n\n// Optional chaining\nlet length = name?.count  // Int? (nil if name is nil)",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-opt-1",
+        "lineNumber": 4,
+        "text": "Optional binding safely unwraps",
+        "highlight": true
+      },
+      {
+        "id": "ann-opt-2",
+        "lineNumber": 10,
+        "text": "Guard provides early exit pattern",
+        "highlight": true
+      },
+      {
+        "id": "ann-opt-3",
+        "lineNumber": 17,
+        "text": "Nil coalescing provides default value",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "swift-basics",
+    "isMigrationExample": false
+  },
+  {
+    "id": "private-example",
+    "title": "Private Access Control",
+    "description": "Using private to hide implementation details.",
+    "code": "class BankAccount {\n    private var balance: Double = 0.0  // Only accessible within BankAccount\n    \n    func deposit(amount: Double) {\n        balance += amount  // OK: same class\n    }\n    \n    func getBalance() -> Double {\n        return balance  // OK: same class\n    }\n}\n\nlet account = BankAccount()\n// account.balance  // Error: 'balance' is inaccessible\naccount.deposit(amount: 100.0)  // OK: public method",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-priv-1",
+        "lineNumber": 2,
+        "text": "private restricts access to enclosing declaration",
+        "highlight": true
+      },
+      {
+        "id": "ann-priv-2",
+        "lineNumber": 12,
+        "text": "Cannot access private property from outside",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "access-specifiers",
+    "isMigrationExample": false
+  },
+  {
+    "id": "open-example",
+    "title": "Open vs Public",
+    "description": "Understanding the difference between open and public access levels.",
+    "code": "// In Framework A\nopen class BaseViewController {  // Can be subclassed\n    open func viewDidLoad() { }  // Can be overridden\n    public func setup() { }  // Cannot be overridden outside module\n}\n\n// In Framework B (imports Framework A)\nclass MyViewController: BaseViewController {  // OK: open allows subclassing\n    override func viewDidLoad() {  // OK: open allows overriding\n        super.viewDidLoad()\n    }\n    \n    // override func setup() { }  // Error: public doesn't allow overriding\n}",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-open-1",
+        "lineNumber": 2,
+        "text": "open allows subclassing from other modules",
+        "highlight": true
+      },
+      {
+        "id": "ann-open-2",
+        "lineNumber": 3,
+        "text": "open methods can be overridden",
+        "highlight": true
+      },
+      {
+        "id": "ann-open-3",
+        "lineNumber": 4,
+        "text": "public can be used but not overridden outside module",
+        "highlight": false
+      }
+    ],
+    "relatedTopicId": "access-specifiers",
+    "isMigrationExample": false
+  },
+  {
+    "id": "closure-basic",
+    "title": "Basic Closure Syntax",
+    "description": "Understanding closure syntax and trailing closures.",
+    "code": "// Full closure syntax\nlet add: (Int, Int) -> Int = { (a: Int, b: Int) -> Int in\n    return a + b\n}\n\n// Simplified with type inference\nlet multiply = { (a: Int, b: Int) -> Int in\n    return a * b\n}\n\n// Shorthand argument names\nlet subtract: (Int, Int) -> Int = { $0 - $1 }\n\n// Trailing closure\nlet numbers = [1, 2, 3, 4, 5]\nlet doubled = numbers.map { $0 * 2 }  // [2, 4, 6, 8, 10]\n\n// Multiple trailing closures (Swift 5.3+)\nUIView.animate(withDuration: 0.3) {\n    view.alpha = 0\n} completion: { _ in\n    view.removeFromSuperview()\n}",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-clos-1",
+        "lineNumber": 2,
+        "text": "Full explicit syntax with parameter and return types",
+        "highlight": false
+      },
+      {
+        "id": "ann-clos-2",
+        "lineNumber": 11,
+        "text": "Shorthand $0, $1 refer to first and second parameters",
+        "highlight": true
+      },
+      {
+        "id": "ann-clos-3",
+        "lineNumber": 14,
+        "text": "Trailing closure when it's the last parameter",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "closures",
+    "isMigrationExample": false
+  },
+  {
+    "id": "capture-lists",
+    "title": "Closure Capture Lists",
+    "description": "Using capture lists to control how values are captured.",
+    "code": "class ViewController {\n    var data: [String] = []\n    \n    func setupClosure() {\n        // Weak capture - prevents retain cycle\n        someAsyncCall { [weak self] in\n            self?.data.append(\"item\")  // Optional because weak\n        }\n        \n        // Unowned capture - use when certain of lifetime\n        anotherCall { [unowned self] in\n            self.data.append(\"item\")  // Non-optional, but unsafe\n        }\n        \n        // Capture by value\n        var counter = 0\n        closure { [counter] in  // Captures current value\n            // counter is a copy, not a reference\n        }\n    }\n}",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-cap-1",
+        "lineNumber": 5,
+        "text": "[weak self] prevents retain cycle, self becomes optional",
+        "highlight": true
+      },
+      {
+        "id": "ann-cap-2",
+        "lineNumber": 10,
+        "text": "[unowned self] assumes self won't be deallocated",
+        "highlight": true
+      },
+      {
+        "id": "ann-cap-3",
+        "lineNumber": 15,
+        "text": "Capture by value creates a copy",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "closures",
+    "isMigrationExample": false
+  },
+  {
+    "id": "weak-reference",
+    "title": "Weak References",
+    "description": "Using weak references to break retain cycles.",
+    "code": "class Person {\n    var name: String\n    weak var apartment: Apartment?  // Weak reference\n    \n    init(name: String) {\n        self.name = name\n    }\n}\n\nclass Apartment {\n    let unit: String\n    var tenant: Person?  // Strong reference\n    \n    init(unit: String) {\n        self.unit = unit\n    }\n}\n\nvar person: Person? = Person(name: \"Alice\")\nvar apartment: Apartment? = Apartment(unit: \"4A\")\n\nperson?.apartment = apartment\napartment?.tenant = person\n\nperson = nil  // Person deallocated\n// apartment?.tenant is now nil automatically (weak reference)",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-weak-1",
+        "lineNumber": 3,
+        "text": "weak doesn't increase reference count",
+        "highlight": true
+      },
+      {
+        "id": "ann-weak-2",
+        "lineNumber": 20,
+        "text": "Weak reference automatically becomes nil when object deallocates",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "memory-management",
+    "isMigrationExample": false
+  },
+  {
+    "id": "retain-cycles",
+    "title": "Retain Cycle Example",
+    "description": "Identifying and fixing retain cycles.",
+    "code": "// PROBLEM: Retain cycle\nclass Person {\n    var apartment: Apartment?  // Strong\n}\n\nclass Apartment {\n    var tenant: Person?  // Strong - creates cycle!\n}\n\n// SOLUTION: Use weak\nclass Apartment {\n    weak var tenant: Person?  // Weak breaks the cycle\n}\n\n// Or use unowned if certain of lifetime\nclass CreditCard {\n    unowned let customer: Customer  // Non-optional, but assumes customer exists\n}",
+    "language": "swift",
+    "beforeCode": "// Retain cycle - neither deallocates\nclass Person {\n    var apartment: Apartment?\n}\n\nclass Apartment {\n    var tenant: Person?  // Strong reference!\n}",
+    "afterCode": "// Fixed with weak\nclass Apartment {\n    weak var tenant: Person?  // Weak breaks cycle\n}",
+    "annotations": [
+      {
+        "id": "ann-cycle-1",
+        "lineNumber": 6,
+        "text": "Strong reference creates retain cycle",
+        "highlight": true
+      },
+      {
+        "id": "ann-cycle-2",
+        "lineNumber": 11,
+        "text": "Weak reference breaks the cycle",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "memory-management",
+    "isMigrationExample": true
+  },
+  {
+    "id": "gcd-basic",
+    "title": "Basic GCD Usage",
+    "description": "Using GCD for background work and UI updates.",
+    "code": "// Background work\nDispatchQueue.global().async {\n    // Heavy computation or network call\n    let data = processData()\n    \n    // Update UI on main thread\n    DispatchQueue.main.async {\n        updateUI(with: data)\n    }\n}\n\n// With QoS\nDispatchQueue.global(qos: .userInitiated).async {\n    // Important user-initiated work\n}\n\n// Custom serial queue\nlet serialQueue = DispatchQueue(label: \"com.app.serial\")\nserialQueue.async {\n    // Thread-safe operations\n}",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-gcd-1",
+        "lineNumber": 2,
+        "text": "global() provides system queues for background work",
+        "highlight": true
+      },
+      {
+        "id": "ann-gcd-2",
+        "lineNumber": 6,
+        "text": "Always update UI on main queue",
+        "highlight": true
+      },
+      {
+        "id": "ann-gcd-3",
+        "lineNumber": 11,
+        "text": "QoS prioritizes work based on importance",
+        "highlight": false
+      }
+    ],
+    "relatedTopicId": "dispatch-queue",
+    "isMigrationExample": false
+  },
+  {
+    "id": "serial-concurrent",
+    "title": "Serial vs Concurrent Queues",
+    "description": "Understanding the difference between serial and concurrent queues.",
+    "code": "// Serial queue - one task at a time\nlet serialQueue = DispatchQueue(label: \"serial\")\nserialQueue.async { print(\"Task 1\") }\nserialQueue.async { print(\"Task 2\") }\n// Always prints: Task 1, then Task 2\n\n// Concurrent queue - tasks can run simultaneously\nlet concurrentQueue = DispatchQueue(label: \"concurrent\", attributes: .concurrent)\nconcurrentQueue.async { print(\"Task A\") }\nconcurrentQueue.async { print(\"Task B\") }\n// May print in any order: A then B, or B then A",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-serial-1",
+        "lineNumber": 2,
+        "text": "Serial queue executes tasks one at a time",
+        "highlight": true
+      },
+      {
+        "id": "ann-concurrent-1",
+        "lineNumber": 8,
+        "text": "Concurrent queue can run multiple tasks in parallel",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "dispatch-queue",
+    "isMigrationExample": false
+  },
+  {
+    "id": "sync-async",
+    "title": "Sync vs Async",
+    "description": "Understanding blocking (sync) vs non-blocking (async) execution.",
+    "code": "// SYNC - blocks current thread\nprint(\"Before\")\nDispatchQueue.global().sync {\n    print(\"Inside sync\")  // Blocks here\n    Thread.sleep(forTimeInterval: 1)\n}\nprint(\"After\")  // Prints after sync completes\n// Output: Before, Inside sync, After\n\n// ASYNC - returns immediately\nprint(\"Before\")\nDispatchQueue.global().async {\n    print(\"Inside async\")  // Runs in background\n    Thread.sleep(forTimeInterval: 1)\n}\nprint(\"After\")  // Prints immediately!\n// Output: Before, After, (then) Inside async",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-sync-1",
+        "lineNumber": 3,
+        "text": "sync blocks until task completes",
+        "highlight": true
+      },
+      {
+        "id": "ann-async-1",
+        "lineNumber": 12,
+        "text": "async returns immediately, task runs in background",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "dispatch-queue",
+    "isMigrationExample": false
+  },
+  {
+    "id": "serial-sync-example",
+    "title": "Serial Queue + Sync",
+    "description": "Serial queue with synchronous execution - blocks and maintains order.",
+    "code": "let serialQueue = DispatchQueue(label: \"serial\")\n\nprint(\"Start\")\nserialQueue.sync {\n    print(\"Task 1\")\n    Thread.sleep(forTimeInterval: 0.5)\n}\nprint(\"After 1\")\n\nserialQueue.sync {\n    print(\"Task 2\")\n}\nprint(\"After 2\")\n\n// Output: Start, Task 1, After 1, Task 2, After 2\n// Note: Blocks current thread, but maintains order",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-ser-sync-1",
+        "lineNumber": 4,
+        "text": "sync blocks current thread",
+        "highlight": true
+      },
+      {
+        "id": "ann-ser-sync-2",
+        "lineNumber": 11,
+        "text": "Serial guarantees order even with sync",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "serial-concurrent-sync-async",
+    "isMigrationExample": false
+  },
+  {
+    "id": "concurrent-async-example",
+    "title": "Concurrent Queue + Async",
+    "description": "Maximum parallelism without blocking.",
+    "code": "let concurrentQueue = DispatchQueue(label: \"concurrent\", attributes: .concurrent)\n\nprint(\"Start\")\nconcurrentQueue.async {\n    print(\"Task 1\")\n    Thread.sleep(forTimeInterval: 1)\n}\nprint(\"After 1 call\")\n\nconcurrentQueue.async {\n    print(\"Task 2\")\n}\nprint(\"After 2 call\")\n\nconcurrentQueue.async {\n    print(\"Task 3\")\n}\nprint(\"End\")\n\n// Output: Start, After 1 call, After 2 call, End, (then Tasks 1/2/3 in any order)\n// Tasks run in parallel, order not guaranteed",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-conc-async-1",
+        "lineNumber": 4,
+        "text": "async returns immediately",
+        "highlight": true
+      },
+      {
+        "id": "ann-conc-async-2",
+        "lineNumber": 15,
+        "text": "Concurrent allows parallel execution",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "serial-concurrent-sync-async",
+    "isMigrationExample": false
+  },
+  {
+    "id": "avplayer-basic",
+    "title": "Basic AVPlayer Setup",
+    "description": "Creating and using AVPlayer for media playback.",
+    "code": "import AVKit\nimport AVFoundation\n\n// Create player from URL\nlet videoURL = URL(string: \"https://example.com/video.mp4\")!\nlet player = AVPlayer(url: videoURL)\n\n// Play\nplayer.play()\n\n// Pause\nplayer.pause()\n\n// Control playback\nplayer.volume = 0.5  // 0.0 to 1.0\nplayer.isMuted = false\nplayer.rate = 1.0  // Playback speed (1.0 = normal)\n\n// Seek to specific time\nlet time = CMTime(seconds: 30, preferredTimescale: 600)\nplayer.seek(to: time)",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-av-1",
+        "lineNumber": 5,
+        "text": "AVPlayer can play from URL (local or remote)",
+        "highlight": true
+      },
+      {
+        "id": "ann-av-2",
+        "lineNumber": 8,
+        "text": "play() starts playback",
+        "highlight": false
+      },
+      {
+        "id": "ann-av-3",
+        "lineNumber": 17,
+        "text": "CMTime represents time with precision",
+        "highlight": false
+      }
+    ],
+    "relatedTopicId": "avkit",
+    "isMigrationExample": false
+  },
+  {
+    "id": "observableobject-example",
+    "title": "ObservableObject Pattern",
+    "description": "Traditional ObservableObject with @Published properties.",
+    "code": "import SwiftUI\nimport Combine\n\nclass ViewModel: ObservableObject {\n    @Published var count: Int = 0\n    @Published var name: String = \"\"\n    \n    func increment() {\n        count += 1\n    }\n}\n\nstruct ContentView: View {\n    @StateObject private var viewModel = ViewModel()  // Ownership\n    \n    var body: some View {\n        VStack {\n            Text(\"Count: \\(viewModel.count)\")\n            Button(\"Increment\") {\n                viewModel.increment()\n            }\n        }\n    }\n}",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-oo-1",
+        "lineNumber": 4,
+        "text": "Must conform to ObservableObject",
+        "highlight": true
+      },
+      {
+        "id": "ann-oo-2",
+        "lineNumber": 5,
+        "text": "Each property needs @Published",
+        "highlight": true
+      },
+      {
+        "id": "ann-oo-3",
+        "lineNumber": 13,
+        "text": "Use @StateObject for ownership",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "observable-observableobject",
+    "isMigrationExample": false
+  },
+  {
+    "id": "observable-example",
+    "title": "@Observable Pattern",
+    "description": "Modern @Observable macro approach.",
+    "code": "import SwiftUI\nimport Observation\n\n@Observable\nclass ViewModel {\n    var count: Int = 0  // Automatically observed!\n    var name: String = \"\"\n    \n    func increment() {\n        count += 1\n    }\n}\n\nstruct ContentView: View {\n    @State private var viewModel = ViewModel()  // Use @State!\n    \n    var body: some View {\n        VStack {\n            Text(\"Count: \\(viewModel.count)\")\n            Button(\"Increment\") {\n                viewModel.increment()\n            }\n        }\n    }\n}\n\n// Child view - plain var!\nstruct ChildView: View {\n    var viewModel: ViewModel  // No wrapper needed\n    \n    var body: some View {\n        Text(\"\\(viewModel.count)\")\n    }\n}",
+    "language": "swift",
+    "beforeCode": null,
+    "afterCode": null,
+    "annotations": [
+      {
+        "id": "ann-obs-new-1",
+        "lineNumber": 4,
+        "text": "@Observable macro automatically tracks properties",
+        "highlight": true
+      },
+      {
+        "id": "ann-obs-new-2",
+        "lineNumber": 5,
+        "text": "No @Published needed!",
+        "highlight": true
+      },
+      {
+        "id": "ann-obs-new-3",
+        "lineNumber": 13,
+        "text": "Use @State (not @StateObject)",
+        "highlight": true
+      },
+      {
+        "id": "ann-obs-new-4",
+        "lineNumber": 23,
+        "text": "Child views use plain var - no wrapper!",
+        "highlight": true
+      }
+    ],
+    "relatedTopicId": "observable-observableobject",
+    "isMigrationExample": false
+  }
+]

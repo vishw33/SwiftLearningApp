@@ -1,0 +1,59 @@
+{
+  "id": "dynamic-library",
+  "title": "Dynamic Libraries",
+  "description": "Learn about dynamic libraries in Swift/iOS: creation, usage, benefits, and when to use them. Understand framework vs static library differences.",
+  "sections": [
+    {
+      "id": "what-is-dynamic",
+      "title": "What is a Dynamic Library?",
+      "content": "A **dynamic library** (also called a dynamic framework) is code that is loaded at runtime, not linked at compile time.\n\n**Key Characteristics**:\n- Code is loaded when the app launches\n- Shared across multiple processes (memory efficient)\n- Can be updated without recompiling the app\n- Slower initial load time\n- Requires the library to be present at runtime\n\n**File Extensions**:\n- `.dylib` - Dynamic library (macOS)\n- `.framework` - Framework bundle (iOS/macOS)\n\nDynamic libraries are the foundation of iOS frameworks like UIKit, SwiftUI, Foundation, etc.",
+      "codeExampleIds": ["dynamic-basic"]
+    },
+    {
+      "id": "creating-dynamic",
+      "title": "Creating Dynamic Libraries",
+      "content": "**In Xcode**:\n\n1. File → New → Project\n2. Choose \"Framework\" (not \"Static Library\")\n3. Set \"Mach-O Type\" to \"Dynamic Library\"\n\n**Using Swift Package Manager**:\n```swift\n// Package.swift\nlet package = Package(\n    name: \"MyFramework\",\n    products: [\n        .library(\n            name: \"MyFramework\",\n            type: .dynamic,  // Dynamic library\n            targets: [\"MyFramework\"]\n        )\n    ]\n)\n```\n\n**Key Settings**:\n- Build Settings → Mach-O Type → Dynamic Library\n- Enable \"Allow Non-modular Includes\" if needed\n- Set proper deployment target",
+      "codeExampleIds": ["create-dynamic"]
+    },
+    {
+      "id": "when-to-use",
+      "title": "When to Use Dynamic Libraries",
+      "content": "**Best Scenarios**:\n\n1. **Shared Code Across Apps**:\n   - App extensions (Widgets, Share Extensions)\n   - Multiple apps sharing common code\n   - System frameworks\n\n2. **Large Codebases**:\n   - Reduces app binary size\n   - Code can be shared in memory\n   - Better for modular architecture\n\n3. **Plugin Architecture**:\n   - Load code at runtime\n   - Hot-swappable modules\n   - Extensible applications\n\n4. **Swift Package Manager**:\n   - Default for frameworks\n   - Better dependency management\n   - Version control\n\n**Advantages**:\n- Memory efficiency (shared across processes)\n- Smaller app binary\n- Can update framework independently\n- Better code organization",
+      "codeExampleIds": ["dynamic-use-cases"]
+    },
+    {
+      "id": "disadvantages",
+      "title": "Disadvantages & Considerations",
+      "content": "**Challenges**:\n\n1. **Slower Launch Time**:\n   - Libraries must be loaded at startup\n   - More dynamic libraries = slower launch\n   - iOS limits this with app thinning\n\n2. **Runtime Dependencies**:\n   - Library must be present at runtime\n   - Missing library = app crash\n   - Version compatibility issues\n\n3. **App Store Restrictions**:\n   - iOS apps can't load arbitrary dynamic libraries\n   - Must be embedded in app bundle\n   - System frameworks are exceptions\n\n4. **Testing Complexity**:\n   - Harder to test in isolation\n   - Requires full app context\n   - More complex CI/CD\n\n**iOS Specific**:\n- Dynamic libraries are embedded in app bundle\n- Each app gets its own copy (not truly shared)\n- App extensions can share frameworks",
+      "codeExampleIds": ["dynamic-disadvantages"]
+    },
+    {
+      "id": "vs-static",
+      "title": "Dynamic vs Static Libraries",
+      "content": "**Comparison**:\n\n| Feature | Dynamic Library | Static Library |\n|---------|----------------|----------------|\n| Linking | Runtime | Compile time |\n| Binary Size | Smaller app | Larger app |\n| Launch Time | Slower | Faster |\n| Memory | Shared | Duplicated |\n| Updates | Possible | Requires rebuild |\n| iOS Support | Frameworks | .a files |\n\n**When to Choose Dynamic**:\n- Multiple apps/extensions\n- Large codebase\n- Need runtime loading\n- Framework distribution\n\n**When to Choose Static**:\n- Single app\n- Fast launch critical\n- Simple dependencies\n- No sharing needed",
+      "codeExampleIds": ["dynamic-vs-static"]
+    },
+    {
+      "id": "swift-package-manager",
+      "title": "Dynamic Libraries with SPM",
+      "content": "**Swift Package Manager** makes it easy to create and use dynamic libraries:\n\n```swift\n// Package.swift\nlet package = Package(\n    name: \"MyPackage\",\n    platforms: [.iOS(.v15)],\n    products: [\n        .library(\n            name: \"MyLibrary\",\n            type: .dynamic,  // Dynamic library\n            targets: [\"MyLibrary\"]\n        )\n    ],\n    targets: [\n        .target(name: \"MyLibrary\")\n    ]\n)\n```\n\n**In Xcode Project**:\n1. File → Add Packages\n2. Enter package URL\n3. Choose \"Dynamic Library\" if option available\n\n**Benefits**:\n- Automatic dependency resolution\n- Version management\n- Easy updates\n- Better than manual framework management",
+      "codeExampleIds": ["spm-dynamic"]
+    }
+  ],
+  "codeExampleIds": [
+    "dynamic-basic",
+    "create-dynamic",
+    "dynamic-use-cases",
+    "dynamic-disadvantages",
+    "dynamic-vs-static",
+    "spm-dynamic"
+  ],
+  "questionIds": [
+    "q-dynamic-1",
+    "q-dynamic-2",
+    "q-dynamic-3",
+    "q-dynamic-4",
+    "q-dynamic-5",
+    "q-dynamic-6"
+  ]
+}

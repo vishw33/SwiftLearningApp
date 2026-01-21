@@ -1,0 +1,64 @@
+{
+  "id": "common-mistakes",
+  "title": "Common Mistakes & Errors",
+  "description": "Learn about the most common pitfalls when working with Swift 6, async/await, and concurrency. Avoid these mistakes in your code.",
+  "sections": [
+    {
+      "id": "data-races",
+      "title": "Data Race Conditions",
+      "content": "Data races occur when multiple threads access shared mutable state without synchronization. Swift 6's strict concurrency helps prevent these, but you still need to understand the patterns.\n\nCommon causes:\n- Accessing shared mutable state from multiple threads\n- Not using actors for shared state\n- Incorrect use of @MainActor\n- Forgetting to mark types as Sendable",
+      "codeExampleIds": ["data-race-example", "data-race-fix"]
+    },
+    {
+      "id": "deadlocks",
+      "title": "Deadlocks and Actor Misuse",
+      "content": "Deadlocks can occur when actors wait for each other in a circular dependency. Understanding actor isolation helps prevent these.\n\nCommon scenarios:\n- Two actors calling each other synchronously\n- Blocking operations on @MainActor\n- Incorrect use of Task.detached\n- Nested actor calls without proper await",
+      "codeExampleIds": ["deadlock-example", "deadlock-fix"]
+    },
+    {
+      "id": "observable-mistakes",
+      "title": "Incorrect @Observable Usage",
+      "content": "The @Observable macro simplifies state management, but there are common mistakes:\n\nMistakes:\n- Using @StateObject with @Observable (should use @State)\n- Using @Published with @Observable (not needed)\n- Nested @Observable objects (not fully supported)\n- Forgetting @State in root view",
+      "codeExampleIds": ["observable-mistake", "observable-correct"]
+    },
+    {
+      "id": "threading-violations",
+      "title": "Threading Violations",
+      "content": "Threading violations occur when you access UI from background threads or perform heavy work on the main thread.\n\nViolations:\n- Updating UI from background thread\n- Heavy computation on @MainActor\n- Not using Task.detached for CPU-intensive work\n- Mixing sync and async incorrectly",
+      "codeExampleIds": ["threading-violation", "threading-fix"]
+    },
+    {
+      "id": "performance-pitfalls",
+      "title": "Performance Pitfalls",
+      "content": "Common performance issues in concurrent code:\n\nIssues:\n- Overusing @MainActor unnecessarily\n- Creating too many tasks\n- Not cancelling tasks properly\n- Blocking the main thread\n- Inefficient actor usage",
+      "codeExampleIds": ["performance-issue", "performance-optimization"]
+    },
+    {
+      "id": "real-world-bugs",
+      "title": "Real-World Bug Examples",
+      "content": "Examples of real bugs found in production code and how to fix them:\n\n1. Network manager updating UI from background thread\n2. View model blocking main thread with heavy computation\n3. Task not being cancelled properly\n4. Actor method called without await in Swift 6",
+      "codeExampleIds": ["bug-example-1", "bug-example-2"]
+    }
+  ],
+  "codeExampleIds": [
+    "data-race-example",
+    "data-race-fix",
+    "deadlock-example",
+    "deadlock-fix",
+    "observable-mistake",
+    "observable-correct",
+    "threading-violation",
+    "threading-fix",
+    "performance-issue",
+    "performance-optimization",
+    "bug-example-1",
+    "bug-example-2"
+  ],
+  "questionIds": [
+    "q-mistakes-1",
+    "q-mistakes-2",
+    "q-mistakes-3",
+    "q-mistakes-4",
+    "q-mistakes-5"
+  ]
+}

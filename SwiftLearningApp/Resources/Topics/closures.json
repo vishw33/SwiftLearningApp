@@ -1,0 +1,77 @@
+{
+  "id": "closures",
+  "title": "Closures in Depth",
+  "description": "Master Swift closures: syntax, capture lists, escaping closures, trailing closures, and advanced patterns. Includes tricky scenarios and common pitfalls.",
+  "sections": [
+    {
+      "id": "closure-basics",
+      "title": "Closure Basics",
+      "content": "A **closure** is a self-contained block of functionality that can be passed around and used in your code.\n\n**Basic Syntax**:\n```swift\nlet closure = { (parameters) -> ReturnType in\n    // code\n    return value\n}\n```\n\n**Simplified Forms**:\n```swift\n// Trailing closure\nnumbers.map { $0 * 2 }\n\n// Shorthand argument names\nnumbers.sorted { $0 < $1 }\n\n// Operator method\nnumbers.sorted(by: <)\n```\n\nClosures in Swift are similar to blocks in Objective-C and lambdas in other languages, but more powerful.",
+      "codeExampleIds": ["closure-basic"]
+    },
+    {
+      "id": "capture-values",
+      "title": "Capturing Values",
+      "content": "Closures can capture and store references to constants and variables from the surrounding context.\n\n**Simple Capture**:\n```swift\nfunc makeIncrementer(incrementAmount: Int) -> () -> Int {\n    var total = 0\n    let incrementer = {\n        total += incrementAmount  // Captures 'total' and 'incrementAmount'\n        return total\n    }\n    return incrementer\n}\n```\n\n**Important**: Closures capture by reference, not by value. This means:\n- Captured variables can be modified\n- Multiple closures can share the same captured variable\n- Can lead to unexpected behavior if not careful",
+      "codeExampleIds": ["capture-values"]
+    },
+    {
+      "id": "capture-lists",
+      "title": "Capture Lists",
+      "content": "Capture lists explicitly control how values are captured.\n\n**Syntax**:\n```swift\n{ [capture list] (parameters) in\n    // code\n}\n```\n\n**Types of Captures**:\n- `[weak self]` - Weak reference (optional)\n- `[unowned self]` - Unowned reference (non-optional, unsafe)\n- `[self]` - Strong reference (explicit)\n- `[variable = value]` - Capture by value\n\n**Example**:\n```swift\nclass MyClass {\n    var value = 0\n    \n    func setupClosure() {\n        someAsyncCall { [weak self] in\n            self?.value = 10  // Weak to avoid retain cycle\n        }\n    }\n}\n```\n\n**When to Use**:\n- `weak` - When closure might outlive the object\n- `unowned` - When you're sure object won't be deallocated\n- By value - When you want a copy, not a reference",
+      "codeExampleIds": ["capture-lists"]
+    },
+    {
+      "id": "escaping-closures",
+      "title": "Escaping Closures",
+      "content": "An **escaping closure** is a closure that's called after the function returns.\n\n**@escaping Attribute**:\n```swift\nfunc asyncOperation(completion: @escaping () -> Void) {\n    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {\n        completion()  // Called after function returns\n    }\n}\n```\n\n**Key Points**:\n- Must use `@escaping` if closure is stored or called later\n- Escaping closures require explicit `self` capture\n- Non-escaping closures can't be stored\n- Default is non-escaping (optimized)\n\n**Common Use Cases**:\n- Network requests\n- Animations\n- Timer callbacks\n- Completion handlers\n\n**Memory Management**:\nAlways consider retain cycles with escaping closures!",
+      "codeExampleIds": ["escaping-closures"]
+    },
+    {
+      "id": "trailing-closures",
+      "title": "Trailing Closures",
+      "content": "When a closure is the last parameter, you can write it after the function call.\n\n**Standard Call**:\n```swift\nnumbers.map({ (number) -> Int in\n    return number * 2\n})\n```\n\n**Trailing Closure**:\n```swift\nnumbers.map { number in\n    number * 2\n}\n```\n\n**Multiple Trailing Closures** (Swift 5.3+):\n```swift\nUIView.animate(withDuration: 0.3) {\n    view.alpha = 0\n} completion: { _ in\n    view.removeFromSuperview()\n}\n```\n\n**Benefits**:\n- More readable code\n- Natural flow\n- Common Swift idiom",
+      "codeExampleIds": ["trailing-closures"]
+    },
+    {
+      "id": "higher-order-functions",
+      "title": "Closures with Higher-Order Functions",
+      "content": "Swift's collection methods use closures extensively:\n\n**map** - Transform each element:\n```swift\nlet doubled = numbers.map { $0 * 2 }\n```\n\n**filter** - Select elements:\n```swift\nlet evens = numbers.filter { $0 % 2 == 0 }\n```\n\n**reduce** - Combine elements:\n```swift\nlet sum = numbers.reduce(0) { $0 + $1 }\n```\n\n**compactMap** - Transform and remove nils:\n```swift\nlet valid = strings.compactMap { Int($0) }\n```\n\n**flatMap** - Flatten nested collections:\n```swift\nlet flattened = arrays.flatMap { $0 }\n```\n\nThese functional operations make code more expressive and concise.",
+      "codeExampleIds": ["higher-order"]
+    },
+    {
+      "id": "common-pitfalls",
+      "title": "Common Pitfalls & Tricky Scenarios",
+      "content": "**1. Retain Cycles**:\n```swift\nclass ViewController {\n    var closure: (() -> Void)?\n    \n    func setup() {\n        closure = {  // Strong reference cycle!\n            self.doSomething()\n        }\n    }\n}\n// Fix: Use [weak self]\n```\n\n**2. Capturing Mutable Variables**:\n```swift\nvar closures: [() -> Int] = []\nfor i in 0..<3 {\n    closures.append { i }  // All capture same 'i'!\n}\n// Fix: Capture by value [i = i]\n```\n\n**3. Escaping in Non-Escaping Context**:\n```swift\nfunc badExample(closure: () -> Void) {\n    storedClosure = closure  // Error: needs @escaping\n}\n```\n\n**4. Self in Escaping Closures**:\n```swift\n// Must be explicit\nasyncCall { [weak self] in\n    self?.doWork()\n}\n```",
+      "codeExampleIds": ["closure-pitfalls"]
+    },
+    {
+      "id": "advanced-patterns",
+      "title": "Advanced Closure Patterns",
+      "content": "**1. Function Types as Parameters**:\n```swift\nfunc operate(a: Int, b: Int, operation: (Int, Int) -> Int) -> Int {\n    return operation(a, b)\n}\n```\n\n**2. Returning Closures**:\n```swift\nfunc makeMultiplier(factor: Int) -> (Int) -> Int {\n    return { $0 * factor }\n}\n```\n\n**3. Closures as Properties**:\n```swift\nclass Button {\n    var onTap: (() -> Void)?\n    \n    func tapped() {\n        onTap?()\n    }\n}\n```\n\n**4. Autoclosures**:\n```swift\nfunc assert(_ condition: @autoclosure () -> Bool) {\n    if !condition() { fatalError() }\n}\n```\n\n**5. Variadic Closures**:\n```swift\nfunc perform(operations: (() -> Void)...) {\n    operations.forEach { $0() }\n}\n```",
+      "codeExampleIds": ["advanced-closures"]
+    }
+  ],
+  "codeExampleIds": [
+    "closure-basic",
+    "capture-values",
+    "capture-lists",
+    "escaping-closures",
+    "trailing-closures",
+    "higher-order",
+    "closure-pitfalls",
+    "advanced-closures"
+  ],
+  "questionIds": [
+    "q-closure-1",
+    "q-closure-2",
+    "q-closure-3",
+    "q-closure-4",
+    "q-closure-5",
+    "q-closure-6",
+    "q-closure-7",
+    "q-closure-8",
+    "q-closure-9",
+    "q-closure-10"
+  ]
+}

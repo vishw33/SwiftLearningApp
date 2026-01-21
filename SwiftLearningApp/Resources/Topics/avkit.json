@@ -1,0 +1,89 @@
+{
+  "id": "avkit",
+  "title": "AVKit Framework",
+  "description": "Complete guide to AVKit: AVPlayer, AVPlayerViewController, video playback, audio handling, media composition, and all AVKit subtopics.",
+  "sections": [
+    {
+      "id": "avkit-overview",
+      "title": "AVKit Overview",
+      "content": "**AVKit** provides high-level interfaces for playing audiovisual media.\n\n**Key Components**:\n- `AVPlayer` - Media player engine\n- `AVPlayerViewController` - Ready-made video player UI\n- `AVPlayerItem` - Represents a playable asset\n- `AVAsset` - Abstract media asset\n- `AVURLAsset` - Asset from URL\n\n**Framework Hierarchy**:\n- **AVKit** (High-level, UI)\n- **AVFoundation** (Low-level, media processing)\n- **Core Media** (Lowest level)\n\n**Common Use Cases**:\n- Video playback\n- Audio playback\n- Streaming media\n- Picture-in-picture\n- Custom media players",
+      "codeExampleIds": ["avkit-overview"]
+    },
+    {
+      "id": "avplayer",
+      "title": "AVPlayer",
+      "content": "**AVPlayer** is the core media player class.\n\n**Basic Setup**:\n```swift\nimport AVKit\n\nlet url = URL(string: \"https://example.com/video.mp4\")!\nlet player = AVPlayer(url: url)\n\n// Play\nplayer.play()\n\n// Pause\nplayer.pause()\n\n// Seek\nlet time = CMTime(seconds: 30, preferredTimescale: 600)\nplayer.seek(to: time)\n```\n\n**Key Properties**:\n- `currentItem: AVPlayerItem?` - Current media item\n- `rate: Float` - Playback rate (1.0 = normal)\n- `volume: Float` - Volume (0.0 to 1.0)\n- `isMuted: Bool` - Mute state\n\n**Observable Properties**:\n- Use KVO or Combine to observe changes\n- `timeControlStatus` - Playing, paused, waiting\n- `status` - Ready, unknown, failed",
+      "codeExampleIds": ["avplayer-basic"]
+    },
+    {
+      "id": "avplayerviewcontroller",
+      "title": "AVPlayerViewController",
+      "content": "**AVPlayerViewController** provides a complete video player UI.\n\n**Basic Usage**:\n```swift\nimport AVKit\n\nlet player = AVPlayer(url: videoURL)\nlet playerViewController = AVPlayerViewController()\nplayerViewController.player = player\n\n// Present\npresent(playerViewController, animated: true) {\n    player.play()\n}\n\n// Or push in navigation\nnavigationController?.pushViewController(playerViewController, animated: true)\n```\n\n**Features**:\n- Play/pause controls\n- Scrubbing timeline\n- Fullscreen support\n- Picture-in-picture (PiP)\n- AirPlay support\n- Subtitles/captions\n\n**Customization**:\n```swift\nplayerViewController.showsPlaybackControls = true\nplayerViewController.allowsPictureInPicturePlayback = true\nplayerViewController.videoGravity = .resizeAspectFill\n```",
+      "codeExampleIds": ["avplayerviewcontroller"]
+    },
+    {
+      "id": "avplayeritem",
+      "title": "AVPlayerItem",
+      "content": "**AVPlayerItem** represents a playable media item.\n\n**Creation**:\n```swift\nlet asset = AVURLAsset(url: videoURL)\nlet playerItem = AVPlayerItem(asset: asset)\nlet player = AVPlayer(playerItem: playerItem)\n```\n\n**Key Properties**:\n- `asset: AVAsset` - The media asset\n- `duration: CMTime` - Total duration\n- `status: AVPlayerItem.Status` - Loading state\n- `error: Error?` - Any errors\n- `tracks: [AVPlayerItemTrack]` - Media tracks\n\n**Observable**:\n```swift\nplayerItem.addObserver(self, forKeyPath: \"status\", options: .new, context: nil)\n\noverride func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {\n    if keyPath == \"status\" {\n        switch playerItem.status {\n        case .readyToPlay:\n            player.play()\n        case .failed:\n            print(\"Error: \\(playerItem.error)\")\n        default:\n            break\n        }\n    }\n}\n```",
+      "codeExampleIds": ["avplayeritem"]
+    },
+    {
+      "id": "video-playback",
+      "title": "Video Playback",
+      "content": "**Complete Video Playback Example**:\n\n```swift\nimport AVKit\nimport AVFoundation\n\nclass VideoPlayerManager {\n    var player: AVPlayer?\n    var playerViewController: AVPlayerViewController?\n    \n    func playVideo(from url: URL, in viewController: UIViewController) {\n        let asset = AVURLAsset(url: url)\n        let playerItem = AVPlayerItem(asset: asset)\n        \n        player = AVPlayer(playerItem: playerItem)\n        playerViewController = AVPlayerViewController()\n        playerViewController?.player = player\n        \n        viewController.present(playerViewController!, animated: true) {\n            self.player?.play()\n        }\n    }\n}\n```\n\n**Local Video**:\n```swift\nif let path = Bundle.main.path(forResource: \"video\", ofType: \"mp4\") {\n    let url = URL(fileURLWithPath: path)\n    let player = AVPlayer(url: url)\n}\n```\n\n**Streaming**:\n```swift\nlet streamingURL = URL(string: \"https://example.com/stream.m3u8\")!\nlet player = AVPlayer(url: streamingURL)\n```",
+      "codeExampleIds": ["video-playback"]
+    },
+    {
+      "id": "audio-playback",
+      "title": "Audio Playback",
+      "content": "**Audio with AVPlayer**:\n\n```swift\nlet audioURL = URL(string: \"https://example.com/audio.mp3\")!\nlet player = AVPlayer(url: audioURL)\n\n// Play in background\nlet audioSession = AVAudioSession.sharedInstance()\ntry? audioSession.setCategory(.playback, mode: .default)\ntry? audioSession.setActive(true)\n\nplayer.play()\n```\n\n**Background Audio**:\n```swift\n// In Info.plist\n// UIBackgroundModes: audio\n\n// In code\nlet audioSession = AVAudioSession.sharedInstance()\ndo {\n    try audioSession.setCategory(.playback, mode: .default, options: [])\n    try audioSession.setActive(true)\n} catch {\n    print(\"Failed to set up audio session\")\n}\n```\n\n**Audio Controls**:\n```swift\nplayer.volume = 0.5  // 0.0 to 1.0\nplayer.isMuted = false\nplayer.rate = 1.0  // Playback speed\n```",
+      "codeExampleIds": ["audio-playback"]
+    },
+    {
+      "id": "picture-in-picture",
+      "title": "Picture-in-Picture (PiP)",
+      "content": "**Picture-in-Picture** allows video to play in a small window while using other apps.\n\n**Setup**:\n```swift\nimport AVKit\n\nclass VideoViewController: AVPlayerViewController {\n    override func viewDidLoad() {\n        super.viewDidLoad()\n        \n        allowsPictureInPicturePlayback = true\n        \n        // Enable PiP capability in project settings\n    }\n}\n```\n\n**PiP Delegate**:\n```swift\nextension VideoViewController: AVPlayerViewControllerDelegate {\n    func playerViewController(_ playerViewController: AVPlayerViewController, willStartPictureInPictureWithAnimationCoordinator coordinator: any AVPictureInPictureControllerDelegate) {\n        // PiP starting\n    }\n    \n    func playerViewController(_ playerViewController: AVPlayerViewController, didStopPictureInPictureWithAnimationCoordinator coordinator: any AVPictureInPictureControllerDelegate) {\n        // PiP stopped\n    }\n}\n```\n\n**Requirements**:\n- Enable PiP capability in project\n- iOS 9.0+\n- Works on iPad and iPhone (iOS 15+)",
+      "codeExampleIds": ["picture-in-picture"]
+    },
+    {
+      "id": "media-composition",
+      "title": "Media Composition",
+      "content": "**AVComposition** allows combining multiple media assets.\n\n**Creating Composition**:\n```swift\nlet composition = AVMutableComposition()\n\n// Add video track\nlet videoTrack = composition.addMutableTrack(\n    withMediaType: .video,\n    preferredTrackID: kCMPersistentTrackID_Invalid\n)\n\n// Add audio track\nlet audioTrack = composition.addMutableTrack(\n    withMediaType: .audio,\n    preferredTrackID: kCMPersistentTrackID_Invalid\n)\n\n// Insert segments\nlet asset = AVURLAsset(url: videoURL)\nif let sourceVideoTrack = asset.tracks(withMediaType: .video).first {\n    try? videoTrack?.insertTimeRange(\n        CMTimeRange(start: .zero, duration: asset.duration),\n        of: sourceVideoTrack,\n        at: .zero\n    )\n}\n\n// Play composition\nlet playerItem = AVPlayerItem(asset: composition)\nlet player = AVPlayer(playerItem: playerItem)\n```",
+      "codeExampleIds": ["media-composition"]
+    },
+    {
+      "id": "custom-player",
+      "title": "Custom Media Player",
+      "content": "**Building Custom Player UI**:\n\n```swift\nimport AVKit\nimport AVFoundation\n\nclass CustomPlayerView: UIView {\n    var player: AVPlayer? {\n        get { playerLayer.player }\n        set { playerLayer.player = newValue }\n    }\n    \n    var playerLayer: AVPlayerLayer {\n        return layer as! AVPlayerLayer\n    }\n    \n    override static var layerClass: AnyClass {\n        return AVPlayerLayer.self\n    }\n}\n\n// Usage\nlet playerView = CustomPlayerView()\nlet player = AVPlayer(url: videoURL)\nplayerView.player = player\n```\n\n**Custom Controls**:\n```swift\n@IBAction func playPauseTapped(_ sender: UIButton) {\n    if player.rate == 0 {\n        player.play()\n    } else {\n        player.pause()\n    }\n}\n\n@IBAction func seek(_ sender: UISlider) {\n    let time = CMTime(seconds: Double(sender.value), preferredTimescale: 600)\n    player.seek(to: time)\n}\n```",
+      "codeExampleIds": ["custom-player"]
+    },
+    {
+      "id": "error-handling",
+      "title": "Error Handling & Best Practices",
+      "content": "**Error Handling**:\n```swift\nplayerItem.addObserver(self, forKeyPath: \"status\", options: .new, context: nil)\n\n// Handle errors\nif let error = playerItem.error {\n    print(\"Playback error: \\(error)\")\n    // Show error to user\n}\n\n// Network errors\nNotificationCenter.default.addObserver(\n    forName: .AVPlayerItemFailedToPlayToEndTime,\n    object: playerItem,\n    queue: .main\n) { notification in\n    if let error = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? Error {\n        // Handle error\n    }\n}\n```\n\n**Best Practices**:\n- Always check player/item status\n- Handle network errors gracefully\n- Clean up observers in deinit\n- Use weak references for delegates\n- Test with various network conditions\n- Handle interruptions (calls, notifications)\n- Respect user's playback preferences",
+      "codeExampleIds": ["avkit-error-handling"]
+    }
+  ],
+  "codeExampleIds": [
+    "avkit-overview",
+    "avplayer-basic",
+    "avplayerviewcontroller",
+    "avplayeritem",
+    "video-playback",
+    "audio-playback",
+    "picture-in-picture",
+    "media-composition",
+    "custom-player",
+    "avkit-error-handling"
+  ],
+  "questionIds": [
+    "q-avkit-1",
+    "q-avkit-2",
+    "q-avkit-3",
+    "q-avkit-4",
+    "q-avkit-5",
+    "q-avkit-6",
+    "q-avkit-7",
+    "q-avkit-8"
+  ]
+}

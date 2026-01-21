@@ -1,0 +1,66 @@
+{
+  "id": "threading",
+  "title": "Threading Concepts",
+  "description": "Comprehensive guide to threading in Swift: threads, run loops, thread safety, race conditions, synchronization, and best practices.",
+  "sections": [
+    {
+      "id": "threads-basics",
+      "title": "Understanding Threads",
+      "content": "A **thread** is the smallest unit of execution that can be managed independently.\n\n**Key Concepts**:\n- **Main Thread**: UI thread, all UI updates must happen here\n- **Background Threads**: For heavy work, network, processing\n- **Thread Safety**: Code that works correctly with multiple threads\n\n**Thread Lifecycle**:\n1. Created\n2. Started\n3. Running\n4. Blocked/Waiting\n5. Terminated\n\n**In Swift/iOS**:\n- Prefer GCD or async/await over manual threads\n- System manages thread pool\n- Don't create threads manually (use queues)\n\n**Thread vs Queue**:\n- Thread: Low-level execution unit\n- Queue: High-level abstraction (GCD)\n- Queue manages threads for you",
+      "codeExampleIds": ["threads-basic"]
+    },
+    {
+      "id": "main-thread",
+      "title": "Main Thread & UI Updates",
+      "content": "The **main thread** is where all UI updates must occur.\n\n**Rules**:\n- ✅ All UI updates on main thread\n- ✅ UIKit/SwiftUI operations on main thread\n- ❌ Never block main thread\n- ❌ No heavy computation on main thread\n\n**Updating UI from Background**:\n```swift\n// Correct way\nDispatchQueue.global().async {\n    let data = processData()\n    \n    DispatchQueue.main.async {\n        updateUI(with: data)  // On main thread\n    }\n}\n\n// Modern way (async/await)\n@MainActor\nfunc updateUI() {\n    // Automatically on main thread\n}\n```\n\n**Detecting Main Thread**:\n```swift\nif Thread.isMainThread {\n    // On main thread\n}\n```\n\n**Performance**: Blocking main thread = frozen UI = bad user experience!",
+      "codeExampleIds": ["main-thread"]
+    },
+    {
+      "id": "thread-safety",
+      "title": "Thread Safety",
+      "content": "**Thread-safe** code works correctly when accessed from multiple threads.\n\n**Problems with Unsafe Code**:\n```swift\nclass Counter {\n    var count = 0\n    \n    func increment() {\n        count += 1  // NOT thread-safe!\n    }\n}\n\n// Multiple threads calling increment() = race condition\n```\n\n**Solutions**:\n\n1. **Serial Queue**:\n```swift\nprivate let queue = DispatchQueue(label: \"counter\")\nfunc increment() {\n    queue.async { self.count += 1 }\n}\n```\n\n2. **Locks**:\n```swift\nprivate let lock = NSLock()\nfunc increment() {\n    lock.lock()\n    count += 1\n    lock.unlock()\n}\n```\n\n3. **Actors** (Swift 6):\n```swift\nactor Counter {\n    var count = 0\n    func increment() { count += 1 }  // Thread-safe!\n}\n```\n\n**Best Practice**: Use actors or serial queues for shared mutable state.",
+      "codeExampleIds": ["thread-safety"]
+    },
+    {
+      "id": "race-conditions",
+      "title": "Race Conditions",
+      "content": "A **race condition** occurs when the outcome depends on timing of thread execution.\n\n**Example**:\n```swift\nvar balance = 1000\n\n// Thread 1\nbalance = balance - 500  // Read: 1000, Write: 500\n\n// Thread 2 (simultaneous)\nbalance = balance - 300  // Read: 1000, Write: 700\n\n// Result: 700 (should be 200!)\n```\n\n**Types**:\n- **Data Race**: Multiple threads accessing same data\n- **Time-of-check to time-of-use**: State changes between check and use\n\n**Prevention**:\n- Synchronization (locks, queues, actors)\n- Immutable data structures\n- Value types (structs)\n- Proper access control\n\n**Swift 6**: Strict concurrency checking prevents many race conditions at compile time.",
+      "codeExampleIds": ["race-conditions"]
+    },
+    {
+      "id": "synchronization",
+      "title": "Synchronization Mechanisms",
+      "content": "**1. Locks**:\n```swift\nlet lock = NSLock()\nlock.lock()\n// Critical section\nlock.unlock()\n```\n\n**2. Serial Queues**:\n```swift\nlet queue = DispatchQueue(label: \"serial\")\nqueue.async {\n    // Thread-safe code\n}\n```\n\n**3. Semaphores**:\n```swift\nlet semaphore = DispatchSemaphore(value: 1)\nsemaphore.wait()\n// Critical section\nsemaphore.signal()\n```\n\n**4. Barriers** (Concurrent queues):\n```swift\nconcurrentQueue.async(flags: .barrier) {\n    // Exclusive access\n}\n```\n\n**5. Actors** (Swift 6):\n```swift\nactor SafeCounter {\n    var value = 0\n    func increment() { value += 1 }\n}\n```\n\n**Best Choice**: Use actors for new code, queues for legacy.",
+      "codeExampleIds": ["synchronization"]
+    },
+    {
+      "id": "run-loops",
+      "title": "Run Loops",
+      "content": "A **run loop** is an event processing loop that manages input sources.\n\n**Main Run Loop**:\n- Processes UI events\n- Timer events\n- Perform selectors\n- Keeps main thread alive\n\n**Background Run Loops**:\n- Can be created for background threads\n- Less common in modern Swift\n\n**Usage**:\n```swift\n// Schedule on run loop\nRunLoop.main.perform {\n    // Executes on next run loop iteration\n}\n\n// Run loop modes\nRunLoop.current.run(mode: .default, before: .distantFuture)\n```\n\n**In Practice**:\n- GCD and async/await handle most cases\n- Run loops are lower-level\n- Main run loop handles UI automatically\n- Rarely need to interact directly",
+      "codeExampleIds": ["run-loops"]
+    },
+    {
+      "id": "best-practices",
+      "title": "Threading Best Practices",
+      "content": "**Guidelines**:\n\n1. **Prefer High-Level APIs**:\n   - Use async/await over manual threads\n   - Use GCD over Thread class\n   - Use actors for shared state\n\n2. **Minimize Shared Mutable State**:\n   - Use value types (structs)\n   - Immutable data structures\n   - Local variables when possible\n\n3. **Keep Main Thread Responsive**:\n   - Move heavy work off main thread\n   - Update UI on main thread only\n   - Use async operations\n\n4. **Use Appropriate Synchronization**:\n   - Actors for new code\n   - Serial queues for legacy\n   - Avoid locks when possible\n\n5. **Test Thread Safety**:\n   - Test with multiple threads\n   - Use Thread Sanitizer\n   - Check for race conditions\n\n6. **Document Threading Assumptions**:\n   - Which thread methods run on\n   - Thread safety guarantees\n   - Synchronization requirements",
+      "codeExampleIds": ["threading-best-practices"]
+    }
+  ],
+  "codeExampleIds": [
+    "threads-basic",
+    "main-thread",
+    "thread-safety",
+    "race-conditions",
+    "synchronization",
+    "run-loops",
+    "threading-best-practices"
+  ],
+  "questionIds": [
+    "q-threading-1",
+    "q-threading-2",
+    "q-threading-3",
+    "q-threading-4",
+    "q-threading-5",
+    "q-threading-6"
+  ]
+}

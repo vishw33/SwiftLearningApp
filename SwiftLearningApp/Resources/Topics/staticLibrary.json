@@ -1,0 +1,59 @@
+{
+  "id": "static-library",
+  "title": "Static Libraries",
+  "description": "Comprehensive guide to static libraries in Swift/iOS: creation, linking, advantages, and when static libraries are the better choice.",
+  "sections": [
+    {
+      "id": "what-is-static",
+      "title": "What is a Static Library?",
+      "content": "A **static library** is code that is linked into your app at compile time, becoming part of the final executable.\n\n**Key Characteristics**:\n- Code is copied into the app binary\n- Faster app launch (no runtime loading)\n- Larger app binary size\n- No runtime dependencies\n- Code is duplicated if used by multiple targets\n\n**File Extensions**:\n- `.a` - Archive/static library (Unix)\n- `.framework` with static linking (iOS)\n\nStatic libraries are embedded directly into your app, making it self-contained.",
+      "codeExampleIds": ["static-basic"]
+    },
+    {
+      "id": "creating-static",
+      "title": "Creating Static Libraries",
+      "content": "**In Xcode**:\n\n1. File → New → Project\n2. Choose \"Framework\" or \"Static Library\"\n3. Set \"Mach-O Type\" to \"Static Library\"\n\n**Build Settings**:\n- Mach-O Type → Static Library\n- Skip Install → NO (for distribution)\n- Installation Directory → $(LOCAL_LIBRARY_DIR)\n\n**Using Swift Package Manager**:\n```swift\n// Package.swift\nlet package = Package(\n    name: \"MyLibrary\",\n    products: [\n        .library(\n            name: \"MyLibrary\",\n            type: .static,  // Static library\n            targets: [\"MyLibrary\"]\n        )\n    ]\n)\n```\n\n**Creating .a file**:\n- Build the library target\n- Find `.a` file in Products folder\n- Link it in your app project",
+      "codeExampleIds": ["create-static"]
+    },
+    {
+      "id": "when-to-use",
+      "title": "When to Use Static Libraries",
+      "content": "**Best Scenarios**:\n\n1. **Single App Projects**:\n   - No code sharing needed\n   - Simpler dependency management\n   - Faster build times\n\n2. **Performance Critical**:\n   - Fast app launch required\n   - No runtime loading overhead\n   - Predictable performance\n\n3. **Small to Medium Codebases**:\n   - Binary size not a concern\n   - Simpler architecture\n   - Easier debugging\n\n4. **Third-Party Dependencies**:\n   - Many libraries default to static\n   - CocoaPods often uses static\n   - Better compatibility\n\n**Advantages**:\n- Faster app launch\n- No runtime dependencies\n- Self-contained app\n- Easier to debug\n- Better performance predictability",
+      "codeExampleIds": ["static-use-cases"]
+    },
+    {
+      "id": "disadvantages",
+      "title": "Disadvantages & Considerations",
+      "content": "**Challenges**:\n\n1. **Larger Binary Size**:\n   - Code is duplicated in each target\n   - App extensions each get a copy\n   - Can significantly increase app size\n\n2. **No Code Sharing**:\n   - Each app/extension has its own copy\n   - Memory inefficient for multiple processes\n   - Updates require full rebuild\n\n3. **Build Time**:\n   - Longer compile times\n   - Must rebuild when library changes\n   - Slower iteration\n\n4. **Dependency Management**:\n   - Can have duplicate symbols\n   - Linker errors more common\n   - Version conflicts harder to resolve\n\n**iOS Specific**:\n- Static libraries are preferred for single apps\n- Better launch performance\n- App Store friendly (no restrictions)",
+      "codeExampleIds": ["static-disadvantages"]
+    },
+    {
+      "id": "linking",
+      "title": "Linking Static Libraries",
+      "content": "**In Xcode Project**:\n\n1. **Add Library to Project**:\n   - Drag `.a` file or framework\n   - Add to target's \"Link Binary With Libraries\"\n\n2. **Build Settings**:\n   - Other Linker Flags: `-ObjC` (if needed)\n   - Library Search Paths: Path to library\n   - Header Search Paths: Path to headers\n\n3. **Import in Code**:\n   ```swift\n   import MyStaticLibrary\n   ```\n\n**Common Issues**:\n- **Duplicate Symbols**: Multiple libraries with same symbols\n- **Missing Symbols**: Library not linked properly\n- **Architecture Mismatch**: Wrong architecture (arm64 vs x86_64)\n\n**Debugging**:\n- Use `nm` command to list symbols\n- Check linker errors carefully\n- Verify architecture compatibility",
+      "codeExampleIds": ["linking-static"]
+    },
+    {
+      "id": "vs-dynamic",
+      "title": "Static vs Dynamic Comparison",
+      "content": "**Quick Decision Guide**:\n\n**Choose Static When**:\n- ✅ Single app (no extensions)\n- ✅ Launch time is critical\n- ✅ Simple dependency structure\n- ✅ Small to medium codebase\n- ✅ No code sharing needed\n\n**Choose Dynamic When**:\n- ✅ Multiple apps/extensions\n- ✅ Large codebase\n- ✅ Need runtime loading\n- ✅ Framework distribution\n- ✅ Memory efficiency matters\n\n**Real-World Example**:\n```swift\n// Static: Good for utility libraries\nimport MyUtilityLibrary  // Linked at compile time\n\n// Dynamic: Good for shared frameworks\nimport SharedFramework  // Loaded at runtime\n```\n\n**Modern Approach**:\n- Swift Package Manager defaults to static\n- Can specify `.static` or `.dynamic`\n- Choose based on your needs",
+      "codeExampleIds": ["static-vs-dynamic"]
+    }
+  ],
+  "codeExampleIds": [
+    "static-basic",
+    "create-static",
+    "static-use-cases",
+    "static-disadvantages",
+    "linking-static",
+    "static-vs-dynamic"
+  ],
+  "questionIds": [
+    "q-static-1",
+    "q-static-2",
+    "q-static-3",
+    "q-static-4",
+    "q-static-5",
+    "q-static-6"
+  ]
+}

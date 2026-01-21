@@ -1,0 +1,77 @@
+{
+  "id": "dispatch-queue",
+  "title": "Dispatch Queues & GCD",
+  "description": "Master Grand Central Dispatch (GCD): serial vs concurrent queues, sync vs async execution, main queue, global queues, and practical implementation patterns.",
+  "sections": [
+    {
+      "id": "gcd-overview",
+      "title": "Grand Central Dispatch (GCD) Overview",
+      "content": "**GCD** is Apple's low-level API for managing concurrent operations.\n\n**Key Concepts**:\n- **Queue**: A queue of tasks to execute\n- **Task**: A block of code (closure) to run\n- **Thread Pool**: System-managed pool of threads\n\n**Benefits**:\n- Simple API\n- Automatic thread management\n- Efficient resource usage\n- Better than manual threading\n\n**Basic Usage**:\n```swift\nDispatchQueue.main.async {\n    // Update UI\n}\n\nDispatchQueue.global().async {\n    // Background work\n}\n```\n\nGCD abstracts away thread management, making concurrency easier.",
+      "codeExampleIds": ["gcd-basic"]
+    },
+    {
+      "id": "queue-types",
+      "title": "Queue Types",
+      "content": "**1. Main Queue**:\n- Serial queue\n- Runs on main thread\n- For UI updates\n```swift\nDispatchQueue.main.async {\n    label.text = \"Updated\"\n}\n```\n\n**2. Global Queues**:\n- System-provided concurrent queues\n- Different quality of service levels\n```swift\nDispatchQueue.global(qos: .userInitiated).async {\n    // Important user work\n}\n```\n\n**3. Custom Serial Queue**:\n- Tasks execute one at a time\n- In order\n```swift\nlet serialQueue = DispatchQueue(label: \"com.app.serial\")\n```\n\n**4. Custom Concurrent Queue**:\n- Tasks can run simultaneously\n- Multiple threads\n```swift\nlet concurrentQueue = DispatchQueue(label: \"com.app.concurrent\", attributes: .concurrent)\n```",
+      "codeExampleIds": ["queue-types"]
+    },
+    {
+      "id": "serial-vs-concurrent",
+      "title": "Serial vs Concurrent Queues",
+      "content": "**Serial Queue**:\n- Executes one task at a time\n- Tasks complete in order\n- Thread-safe for shared resources\n- Slower but predictable\n\n```swift\nlet serialQueue = DispatchQueue(label: \"serial\")\nserialQueue.async { print(\"Task 1\") }\nserialQueue.async { print(\"Task 2\") }\n// Always: Task 1, then Task 2\n```\n\n**Concurrent Queue**:\n- Can execute multiple tasks simultaneously\n- Tasks may complete out of order\n- Faster for independent work\n- Need synchronization for shared resources\n\n```swift\nlet concurrentQueue = DispatchQueue(label: \"concurrent\", attributes: .concurrent)\nconcurrentQueue.async { print(\"Task 1\") }\nconcurrentQueue.async { print(\"Task 2\") }\n// May print in any order\n```\n\n**When to Use**:\n- Serial: When order matters, shared resources\n- Concurrent: Independent parallel work",
+      "codeExampleIds": ["serial-concurrent"]
+    },
+    {
+      "id": "sync-vs-async",
+      "title": "Sync vs Async Execution",
+      "content": "**Sync (Synchronous)**:\n- Blocks current thread until task completes\n- Waits for result\n- Can cause deadlocks if misused\n- Simpler code flow\n\n```swift\nDispatchQueue.global().sync {\n    // This blocks until done\n    processData()\n}\n// Code here runs after processData() completes\n```\n\n**Async (Asynchronous)**:\n- Returns immediately\n- Task runs in background\n- Doesn't block current thread\n- Better for UI responsiveness\n\n```swift\nDispatchQueue.global().async {\n    // This returns immediately\n    processData()\n}\n// Code here runs immediately, processData() runs in background\n```\n\n**Key Differences**:\n| Feature | Sync | Async |\n|---------|------|-------|\n| Blocks thread | Yes | No |\n| Returns immediately | No | Yes |\n| Use on main thread | Avoid! | Preferred |\n| Deadlock risk | High | Low |",
+      "codeExampleIds": ["sync-async"]
+    },
+    {
+      "id": "qos-levels",
+      "title": "Quality of Service (QoS)",
+      "content": "QoS prioritizes work based on importance:\n\n**Levels** (highest to lowest priority):\n\n1. **.userInteractive**:\n   - Immediate user interaction\n   - Animations, UI updates\n   - Very short duration\n\n2. **.userInitiated**:\n   - User-initiated work\n   - Should complete quickly\n   - User is waiting\n\n3. **.default**:\n   - Default priority\n   - Use when unsure\n\n4. **.utility**:\n   - Long-running tasks\n   - User aware but not waiting\n   - Progress indicators\n\n5. **.background**:\n   - Maintenance tasks\n   - User not aware\n   - Prefetching, cleanup\n\n**Usage**:\n```swift\nDispatchQueue.global(qos: .userInitiated).async {\n    // Important user work\n}\n```\n\n**Best Practice**: Choose appropriate QoS for better performance and battery life.",
+      "codeExampleIds": ["qos-levels"]
+    },
+    {
+      "id": "common-patterns",
+      "title": "Common Implementation Patterns",
+      "content": "**1. Background to Main**:\n```swift\nDispatchQueue.global().async {\n    let data = fetchData()  // Background\n    \n    DispatchQueue.main.async {\n        updateUI(with: data)  // Main thread\n    }\n}\n```\n\n**2. Serial Queue for Thread Safety**:\n```swift\nclass DataManager {\n    private let queue = DispatchQueue(label: \"com.app.datamanager\")\n    private var data: [String] = []\n    \n    func add(item: String) {\n        queue.async {\n            self.data.append(item)\n        }\n    }\n}\n```\n\n**3. Dispatch Groups**:\n```swift\nlet group = DispatchGroup()\ngroup.enter()\nasyncTask1 { group.leave() }\ngroup.enter()\nasyncTask2 { group.leave() }\ngroup.notify(queue: .main) {\n    // All tasks completed\n}\n```\n\n**4. Barriers for Concurrent Queues**:\n```swift\nconcurrentQueue.async(flags: .barrier) {\n    // Exclusive access\n}\n```",
+      "codeExampleIds": ["dispatch-patterns"]
+    },
+    {
+      "id": "deadlocks",
+      "title": "Avoiding Deadlocks",
+      "content": "**Common Deadlock Scenarios**:\n\n**1. Sync on Same Queue**:\n```swift\nlet queue = DispatchQueue(label: \"queue\")\nqueue.sync {\n    queue.sync {  // DEADLOCK!\n        // Never executes\n    }\n}\n```\n\n**2. Main Queue Sync from Main**:\n```swift\nDispatchQueue.main.sync {  // From main thread = DEADLOCK!\n    // Never executes\n}\n```\n\n**3. Nested Sync**:\n```swift\nqueue1.sync {\n    queue2.sync {\n        queue1.sync {  // Potential deadlock\n        }\n    }\n}\n```\n\n**Solutions**:\n- Use async instead of sync when possible\n- Never sync on main from main thread\n- Use different queues for nested operations\n- Prefer async/await in modern Swift",
+      "codeExampleIds": ["deadlocks"]
+    },
+    {
+      "id": "modern-alternatives",
+      "title": "Modern Alternatives",
+      "content": "**Swift Concurrency (async/await)**:\n- Replaces many GCD patterns\n- Safer and more readable\n- Structured concurrency\n\n```swift\n// Old GCD way\nDispatchQueue.global().async {\n    let data = fetchData()\n    DispatchQueue.main.async {\n        updateUI(data)\n    }\n}\n\n// Modern way\nlet data = await fetchData()\nupdateUI(data)  // Already on main actor\n```\n\n**Actors**:\n- Thread-safe by design\n- Better than manual queue management\n\n```swift\nactor DataManager {\n    var data: [String] = []\n    func add(item: String) {\n        data.append(item)  // Thread-safe automatically\n    }\n}\n```\n\n**When to Use GCD**:\n- Legacy code\n- Simple one-off tasks\n- When async/await not available\n- Low-level control needed",
+      "codeExampleIds": ["modern-alternatives"]
+    }
+  ],
+  "codeExampleIds": [
+    "gcd-basic",
+    "queue-types",
+    "serial-concurrent",
+    "sync-async",
+    "qos-levels",
+    "dispatch-patterns",
+    "deadlocks",
+    "modern-alternatives"
+  ],
+  "questionIds": [
+    "q-dispatch-1",
+    "q-dispatch-2",
+    "q-dispatch-3",
+    "q-dispatch-4",
+    "q-dispatch-5",
+    "q-dispatch-6",
+    "q-dispatch-7",
+    "q-dispatch-8",
+    "q-dispatch-9",
+    "q-dispatch-10"
+  ]
+}

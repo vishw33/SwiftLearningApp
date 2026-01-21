@@ -1,0 +1,75 @@
+{
+  "id": "access-specifiers",
+  "title": "Access Control & Specifiers",
+  "description": "Comprehensive guide to Swift's access control system. Learn about private, fileprivate, internal, public, and open access levels with detailed use cases.",
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Access Control Overview",
+      "content": "Swift provides five access levels to control the visibility and accessibility of your code:\n\n1. **open** - Most permissive (classes and class members only)\n2. **public** - Accessible from any module\n3. **internal** - Default, accessible within the same module\n4. **fileprivate** - Accessible only within the same file\n5. **private** - Most restrictive, accessible only within the same declaration\n\nThese levels help you create well-encapsulated APIs and maintain code organization.",
+      "codeExampleIds": ["access-overview"]
+    },
+    {
+      "id": "private",
+      "title": "Private Access",
+      "content": "**Private** is the most restrictive access level.\n\n- Accessible only within the enclosing declaration\n- Cannot be accessed from extensions in other files\n- Use for implementation details that should never be exposed\n\n```swift\nclass BankAccount {\n    private var balance: Double = 0.0  // Only accessible within BankAccount\n    \n    func deposit(amount: Double) {\n        balance += amount  // OK: same class\n    }\n}\n\n// balance is not accessible here\n```\n\n**Private(set)**: Allows read access from outside but write access only from within.",
+      "codeExampleIds": ["private-example"]
+    },
+    {
+      "id": "fileprivate",
+      "title": "Fileprivate Access",
+      "content": "**Fileprivate** allows access within the same source file.\n\n- Accessible from anywhere in the same file\n- Useful for sharing implementation details between related types in one file\n- More permissive than private\n\n```swift\n// In same file:\nfileprivate class Helper {\n    func help() { }\n}\n\nclass MyClass {\n    let helper = Helper()  // OK: same file\n}\n```\n\nUse fileprivate when you need to share code between types that are closely related and defined in the same file.",
+      "codeExampleIds": ["fileprivate-example"]
+    },
+    {
+      "id": "internal",
+      "title": "Internal Access (Default)",
+      "content": "**Internal** is the default access level in Swift.\n\n- Accessible anywhere within the same module\n- No access modifier needed (it's the default)\n- Perfect for app-level code\n\n```swift\nclass MyClass {  // Implicitly internal\n    var property: String  // Implicitly internal\n}\n```\n\nWhen building a framework or library, internal members are not accessible to clients. Use public or open for API surface.",
+      "codeExampleIds": ["internal-example"]
+    },
+    {
+      "id": "public",
+      "title": "Public Access",
+      "content": "**Public** allows access from other modules.\n\n- Accessible from any module that imports yours\n- Classes marked public cannot be subclassed outside the module\n- Structs, enums, and functions can be used freely\n\n```swift\npublic struct APIResponse {\n    public var data: String\n    public init(data: String) {\n        self.data = data\n    }\n}\n```\n\n**Important**: Public types must have public initializers if you want them to be constructible from other modules.",
+      "codeExampleIds": ["public-example"]
+    },
+    {
+      "id": "open",
+      "title": "Open Access",
+      "content": "**Open** is the most permissive access level (classes only).\n\n- Can be subclassed from other modules\n- Methods can be overridden from other modules\n- Use for framework APIs that should be extensible\n\n```swift\nopen class BaseViewController {\n    open func viewDidLoad() {\n        // Can be overridden in other modules\n    }\n}\n```\n\n**Difference from Public**:\n- `public class` - Can be used but not subclassed outside module\n- `open class` - Can be subclassed outside module\n\nOpen is only applicable to classes and class members.",
+      "codeExampleIds": ["open-example"]
+    },
+    {
+      "id": "access-rules",
+      "title": "Access Control Rules",
+      "content": "Important rules to remember:\n\n1. **Subclassing**: A subclass cannot have higher access than its superclass\n2. **Overriding**: Overriding methods cannot have lower access than the original\n3. **Generics**: Access level of generic type is the minimum of the type and its constraints\n4. **Extensions**: Extensions have the same access as the type they extend\n5. **Protocols**: Protocol requirements must match the protocol's access level\n\n**Best Practices**:\n- Start with private, increase access only when needed\n- Use internal for app code\n- Use public/open for framework APIs\n- Document your public API thoroughly",
+      "codeExampleIds": ["access-rules-example"]
+    },
+    {
+      "id": "use-cases",
+      "title": "Common Use Cases",
+      "content": "**When to use each level**:\n\n- **Private**: Internal state, helper methods, implementation details\n- **Fileprivate**: Shared utilities in the same file\n- **Internal**: Default for app code, module-internal APIs\n- **Public**: Framework APIs that clients should use\n- **Open**: Framework base classes meant for subclassing\n\n**Example - Well-designed API**:\n```swift\npublic class NetworkManager {\n    public func fetchData() async throws -> Data { }\n    internal func setupSession() { }  // Implementation detail\n    private var session: URLSession  // Internal state\n}\n```",
+      "codeExampleIds": ["access-use-cases"]
+    }
+  ],
+  "codeExampleIds": [
+    "access-overview",
+    "private-example",
+    "fileprivate-example",
+    "internal-example",
+    "public-example",
+    "open-example",
+    "access-rules-example",
+    "access-use-cases"
+  ],
+  "questionIds": [
+    "q-access-1",
+    "q-access-2",
+    "q-access-3",
+    "q-access-4",
+    "q-access-5",
+    "q-access-6",
+    "q-access-7",
+    "q-access-8"
+  ]
+}

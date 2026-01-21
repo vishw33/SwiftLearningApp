@@ -1,0 +1,68 @@
+{
+  "id": "memory-management",
+  "title": "Memory Management: Strong, Weak, Unowned",
+  "description": "Deep dive into Swift's memory management: ARC, strong/weak/unowned references, retain cycles, atomic vs nonatomic, and best practices.",
+  "sections": [
+    {
+      "id": "arc-overview",
+      "title": "ARC (Automatic Reference Counting)",
+      "content": "Swift uses **ARC** to manage memory automatically.\n\n**How it Works**:\n- Counts references to each object\n- When count reaches 0, object is deallocated\n- Happens automatically (no manual memory management)\n\n**Reference Counting**:\n```swift\nvar person: Person? = Person()  // Reference count: 1\nvar anotherRef = person          // Reference count: 2\nperson = nil                      // Reference count: 1\nanotherRef = nil                  // Reference count: 0 → Deallocated\n```\n\n**Key Points**:\n- Only applies to reference types (classes)\n- Value types (structs, enums) are copied, not referenced\n- ARC handles most cases automatically\n- Need to manage retain cycles manually",
+      "codeExampleIds": ["arc-basic"]
+    },
+    {
+      "id": "strong-references",
+      "title": "Strong References (Default)",
+      "content": "**Strong** is the default reference type in Swift.\n\n**Characteristics**:\n- Increases reference count\n- Keeps object alive\n- Default for all references\n- Can create retain cycles\n\n```swift\nclass Person {\n    var name: String\n    var apartment: Apartment?  // Strong reference\n    \n    init(name: String) {\n        self.name = name\n    }\n}\n```\n\n**When to Use**:\n- Default choice for most cases\n- Parent-child relationships\n- When you need guaranteed object lifetime\n- Most property references\n\n**Problem**:\nStrong references can create retain cycles when objects reference each other.",
+      "codeExampleIds": ["strong-reference"]
+    },
+    {
+      "id": "weak-references",
+      "title": "Weak References",
+      "content": "**Weak** references don't increase the reference count.\n\n**Characteristics**:\n- Doesn't keep object alive\n- Automatically becomes `nil` when object is deallocated\n- Must be optional (`var` and `?`)\n- Prevents retain cycles\n\n```swift\nclass Person {\n    var name: String\n    weak var apartment: Apartment?  // Weak reference\n}\n\nvar person: Person? = Person(name: \"Alice\")\nvar apartment: Apartment? = Apartment(unit: \"4A\")\nperson?.apartment = apartment\napartment?.tenant = person\n\nperson = nil      // Person deallocated\n// apartment?.tenant is now nil automatically\n```\n\n**When to Use**:\n- Delegates (to avoid retain cycles)\n- Parent references from children\n- Closure capture lists\n- When object lifetime is not your responsibility",
+      "codeExampleIds": ["weak-reference"]
+    },
+    {
+      "id": "unowned-references",
+      "title": "Unowned References",
+      "content": "**Unowned** references are like weak, but not optional.\n\n**Characteristics**:\n- Doesn't increase reference count\n- Not optional (assumes object exists)\n- Crashes if accessed after deallocation\n- Slightly faster than weak\n\n```swift\nclass Customer {\n    var name: String\n    var card: CreditCard?\n    \n    init(name: String) {\n        self.name = name\n    }\n}\n\nclass CreditCard {\n    let number: UInt64\n    unowned let customer: Customer  // Unowned (non-optional)\n    \n    init(number: UInt64, customer: Customer) {\n        self.number = number\n        self.customer = customer\n    }\n}\n```\n\n**When to Use**:\n- When you're certain object won't be deallocated\n- Parent-child where parent always outlives child\n- Performance-critical code\n- When optional is not needed\n\n**Warning**: Accessing unowned reference after deallocation = crash!",
+      "codeExampleIds": ["unowned-reference"]
+    },
+    {
+      "id": "retain-cycles",
+      "title": "Retain Cycles",
+      "content": "A **retain cycle** occurs when objects reference each other strongly, preventing deallocation.\n\n**Example**:\n```swift\nclass Person {\n    var apartment: Apartment?\n}\n\nclass Apartment {\n    var tenant: Person?  // Strong reference → Retain cycle!\n}\n\nvar person: Person? = Person()\nvar apartment: Apartment? = Apartment()\nperson?.apartment = apartment\napartment?.tenant = person\n\nperson = nil\napartment = nil\n// Neither is deallocated! Memory leak!\n```\n\n**Solution**: Use weak or unowned\n```swift\nclass Apartment {\n    weak var tenant: Person?  // Weak breaks the cycle\n}\n```\n\n**Common Scenarios**:\n- Delegates (use weak)\n- Closures capturing self (use [weak self])\n- Parent-child relationships\n- Observer patterns",
+      "codeExampleIds": ["retain-cycles"]
+    },
+    {
+      "id": "atomic-nonatomic",
+      "title": "Atomic vs Nonatomic",
+      "content": "**Atomic** and **nonatomic** are Objective-C property attributes that affect thread safety.\n\n**Atomic** (default in Objective-C):\n- Thread-safe access\n- Slower (uses locks)\n- Guarantees complete value read/write\n- Not available in pure Swift\n\n**Nonatomic**:\n- Not thread-safe\n- Faster (no locking)\n- Partial reads/writes possible\n- Default in Swift\n\n**In Swift**:\n- Properties are nonatomic by default\n- Use `@Atomic` property wrapper for thread safety\n- Or use actors in Swift 6\n- Or use locks/semaphores manually\n\n**Example**:\n```swift\n@Atomic var counter: Int = 0  // Thread-safe\n\n// Or use actor\nactor Counter {\n    var value = 0\n    func increment() { value += 1 }\n}\n```\n\n**When to Use**:\n- Atomic: When accessed from multiple threads\n- Nonatomic: Single-threaded or already synchronized",
+      "codeExampleIds": ["atomic-nonatomic"]
+    },
+    {
+      "id": "best-practices",
+      "title": "Best Practices",
+      "content": "**Memory Management Guidelines**:\n\n1. **Use Strong by Default**:\n   - Only change when you have a specific reason\n   - Strong is safe and predictable\n\n2. **Break Retain Cycles**:\n   - Use `weak` for delegates\n   - Use `[weak self]` in closures\n   - Use `unowned` when certain of lifetime\n\n3. **Closure Capture Lists**:\n   ```swift\n   // Good\n   asyncCall { [weak self] in\n       self?.doWork()\n   }\n   \n   // Bad\n   asyncCall {\n       self.doWork()  // Retain cycle!\n   }\n   ```\n\n4. **Use Instruments**:\n   - Leaks instrument to find cycles\n   - Allocations to track memory\n   - Time Profiler for performance\n\n5. **Value Types When Possible**:\n   - Structs avoid reference counting\n   - No retain cycles\n   - Better performance",
+      "codeExampleIds": ["memory-best-practices"]
+    }
+  ],
+  "codeExampleIds": [
+    "arc-basic",
+    "strong-reference",
+    "weak-reference",
+    "unowned-reference",
+    "retain-cycles",
+    "atomic-nonatomic",
+    "memory-best-practices"
+  ],
+  "questionIds": [
+    "q-memory-1",
+    "q-memory-2",
+    "q-memory-3",
+    "q-memory-4",
+    "q-memory-5",
+    "q-memory-6",
+    "q-memory-7",
+    "q-memory-8"
+  ]
+}

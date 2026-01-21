@@ -1,0 +1,75 @@
+{
+  "id": "swift-basics",
+  "title": "Swift Language Basics",
+  "description": "Master the fundamentals of Swift programming language. Learn about variables, constants, data types, control flow, functions, and essential language features.",
+  "sections": [
+    {
+      "id": "variables-constants",
+      "title": "Variables and Constants",
+      "content": "Swift provides two ways to declare values:\n\n**Variables (var)**: Can be changed after declaration\n```swift\nvar name = \"Swift\"\nname = \"Swift 6\" // Allowed\n```\n\n**Constants (let)**: Cannot be changed after declaration\n```swift\nlet pi = 3.14159\n// pi = 3.14 // Error: Cannot assign to 'let' value\n```\n\nBest Practice: Always use `let` unless you need to change the value. This makes your code safer and more predictable.",
+      "codeExampleIds": ["var-let-basic"]
+    },
+    {
+      "id": "data-types",
+      "title": "Data Types",
+      "content": "Swift is a type-safe language with strong type inference:\n\n**Basic Types**:\n- `Int`, `Int8`, `Int16`, `Int32`, `Int64` - Integer types\n- `UInt`, `UInt8`, etc. - Unsigned integers\n- `Float` - 32-bit floating point\n- `Double` - 64-bit floating point (default)\n- `Bool` - Boolean (true/false)\n- `String` - Text\n- `Character` - Single character\n\n**Collection Types**:\n- `Array` - Ordered collection\n- `Set` - Unordered unique collection\n- `Dictionary` - Key-value pairs\n\n**Optional Types**:\n- `String?` - Optional String (can be nil)\n- `Int?` - Optional Int\n\nSwift infers types automatically, but you can also specify them explicitly.",
+      "codeExampleIds": ["data-types-example"]
+    },
+    {
+      "id": "optionals",
+      "title": "Optionals",
+      "content": "Optionals represent values that might be absent. They're a core Swift feature for safe programming.\n\n**Declaration**:\n```swift\nvar name: String? = nil\nvar age: Int? = 25\n```\n\n**Unwrapping**:\n- Optional binding: `if let name = name { ... }`\n- Guard statement: `guard let name = name else { return }`\n- Nil coalescing: `let value = optional ?? defaultValue`\n- Force unwrap: `let value = optional!` (dangerous, avoid if possible)\n\n**Optional Chaining**:\n```swift\nlet length = person?.name?.count\n```\n\nOptionals prevent null pointer exceptions and make your code safer.",
+      "codeExampleIds": ["optionals-example"]
+    },
+    {
+      "id": "control-flow",
+      "title": "Control Flow",
+      "content": "Swift provides various control flow statements:\n\n**Conditionals**:\n- `if-else` - Basic conditional\n- `switch` - Pattern matching (very powerful in Swift)\n- `guard` - Early exit conditions\n\n**Loops**:\n- `for-in` - Iterate over sequences\n- `while` - Repeat while condition is true\n- `repeat-while` - Execute at least once\n\n**Control Transfer**:\n- `break` - Exit loop/switch\n- `continue` - Skip to next iteration\n- `return` - Exit function\n- `fallthrough` - Continue to next case in switch\n\nSwift's switch statement is exhaustive and doesn't require break statements.",
+      "codeExampleIds": ["control-flow-example"]
+    },
+    {
+      "id": "functions",
+      "title": "Functions",
+      "content": "Functions are first-class citizens in Swift:\n\n**Basic Function**:\n```swift\nfunc greet(name: String) -> String {\n    return \"Hello, \\(name)!\"\n}\n```\n\n**Features**:\n- Parameter labels (internal vs external names)\n- Default parameters\n- Variadic parameters\n- In-out parameters\n- Function types\n- Higher-order functions\n\n**Function Types**:\n```swift\nlet operation: (Int, Int) -> Int = { $0 + $1 }\n```\n\nFunctions can be assigned to variables, passed as parameters, and returned from other functions.",
+      "codeExampleIds": ["functions-example"]
+    },
+    {
+      "id": "collections",
+      "title": "Collections",
+      "content": "Swift provides three main collection types:\n\n**Array**: Ordered collection with duplicates\n```swift\nvar numbers = [1, 2, 3]\nnumbers.append(4)\n```\n\n**Set**: Unordered collection of unique values\n```swift\nvar uniqueNumbers: Set<Int> = [1, 2, 3]\nuniqueNumbers.insert(4)\n```\n\n**Dictionary**: Key-value pairs\n```swift\nvar ages = [\"Alice\": 30, \"Bob\": 25]\nages[\"Charlie\"] = 28\n```\n\nAll collections are value types and support powerful functional operations like `map`, `filter`, `reduce`.",
+      "codeExampleIds": ["collections-example"]
+    },
+    {
+      "id": "enums",
+      "title": "Enumerations",
+      "content": "Enums in Swift are extremely powerful:\n\n**Basic Enum**:\n```swift\nenum Direction {\n    case north, south, east, west\n}\n```\n\n**Associated Values**:\n```swift\nenum Result<T> {\n    case success(T)\n    case failure(Error)\n}\n```\n\n**Raw Values**:\n```swift\nenum Planet: Int {\n    case mercury = 1, venus, earth, mars\n}\n```\n\n**Methods and Properties**:\nEnums can have methods, computed properties, and initializers. They're perfect for modeling state and options.",
+      "codeExampleIds": ["enums-example"]
+    },
+    {
+      "id": "structs-classes",
+      "title": "Structs vs Classes",
+      "content": "Swift provides both structs and classes:\n\n**Structs** (Value Types):\n- Copied when assigned or passed\n- Stored on stack (usually)\n- No inheritance\n- Preferred for most use cases\n\n**Classes** (Reference Types):\n- Referenced when assigned\n- Stored on heap\n- Support inheritance\n- Identity comparison with `===`\n\n**Key Difference**:\n```swift\nstruct Point { var x, y: Int }\nvar p1 = Point(x: 1, y: 2)\nvar p2 = p1  // Copy\np2.x = 3     // p1.x is still 1\n\nclass Person { var name: String }\nvar p1 = Person(name: \"Alice\")\nvar p2 = p1  // Reference\np2.name = \"Bob\"  // p1.name is also \"Bob\"\n```\n\nSwift's philosophy: \"Prefer structs unless you need reference semantics.\"",
+      "codeExampleIds": ["structs-classes-example"]
+    }
+  ],
+  "codeExampleIds": [
+    "var-let-basic",
+    "data-types-example",
+    "optionals-example",
+    "control-flow-example",
+    "functions-example",
+    "collections-example",
+    "enums-example",
+    "structs-classes-example"
+  ],
+  "questionIds": [
+    "q-basics-1",
+    "q-basics-2",
+    "q-basics-3",
+    "q-basics-4",
+    "q-basics-5",
+    "q-basics-6",
+    "q-basics-7",
+    "q-basics-8"
+  ]
+}

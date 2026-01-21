@@ -1,0 +1,63 @@
+{
+  "id": "swift6-migration",
+  "title": "Swift 6 Migration Measures",
+  "description": "Essential steps and measures for migrating your codebase to Swift 6. Learn about strict concurrency, actor isolation, and migration strategies.",
+  "sections": [
+    {
+      "id": "strict-concurrency",
+      "title": "Strict Concurrency Enforcement",
+      "content": "Swift 6 introduces strict concurrency checking that prevents data races at compile time. This means the compiler will flag potential thread-safety issues before your code runs.\n\nKey changes:\n- All actor method calls require `await` (even if they don't suspend)\n- Types crossing actor boundaries must be `Sendable`\n- Shared mutable state must be protected by actors\n- Compiler warnings become errors",
+      "codeExampleIds": ["strict-concurrency", "actor-await"]
+    },
+    {
+      "id": "actor-isolation",
+      "title": "Actor Isolation Requirements",
+      "content": "Actors provide isolation for mutable state. In Swift 6, actor isolation is strictly enforced to prevent data races.\n\nConcepts:\n- Actor-isolated state can only be accessed from within the actor\n- External access requires `await`\n- `nonisolated` methods don't require await\n- Actor reentrancy and its implications",
+      "codeExampleIds": ["actor-isolation", "actor-reentrancy"]
+    },
+    {
+      "id": "main-actor",
+      "title": "@MainActor Usage",
+      "content": "@MainActor ensures that code runs on the main thread, which is essential for UI updates. However, it doesn't prevent blocking operations.\n\nBest practices:\n- Mark UI-updating code with @MainActor\n- Don't do heavy computation on @MainActor\n- Use Task.detached for off-main work\n- Update UI properties on @MainActor",
+      "codeExampleIds": ["main-actor-basic", "main-actor-performance"]
+    },
+    {
+      "id": "sendable",
+      "title": "Sendable Protocol",
+      "content": "Types that can be safely passed across concurrency boundaries must conform to `Sendable`. This is enforced in Swift 6.\n\nSendable types:\n- Value types (structs, enums)\n- Actors\n- Classes marked as @unchecked Sendable (use with caution)\n- Final classes with only immutable properties",
+      "codeExampleIds": ["sendable-basic", "sendable-fix"]
+    },
+    {
+      "id": "preconcurrency",
+      "title": "@preconcurrency for Gradual Migration",
+      "content": "The @preconcurrency attribute allows you to gradually migrate to Swift 6 by suppressing concurrency warnings for legacy code.\n\nUsage:\n- Import legacy modules with @preconcurrency\n- Use for dependencies that haven't migrated yet\n- Plan to remove as migration progresses\n- Not a permanent solution",
+      "codeExampleIds": ["preconcurrency-usage"]
+    },
+    {
+      "id": "compiler-errors",
+      "title": "Common Compiler Errors and Fixes",
+      "content": "Swift 6 compiler errors often relate to concurrency:\n\n1. 'Call to actor-isolated instance method requires await'\n   Fix: Add await to the call\n\n2. 'Sending 'Type' risks causing data races'\n   Fix: Make type Sendable or use actor\n\n3. 'Main actor-isolated property can not be referenced'\n   Fix: Mark calling code with @MainActor or use await",
+      "codeExampleIds": ["compiler-error-1", "compiler-error-2"]
+    }
+  ],
+  "codeExampleIds": [
+    "strict-concurrency",
+    "actor-await",
+    "actor-isolation",
+    "actor-reentrancy",
+    "main-actor-basic",
+    "main-actor-performance",
+    "sendable-basic",
+    "sendable-fix",
+    "preconcurrency-usage",
+    "compiler-error-1",
+    "compiler-error-2"
+  ],
+  "questionIds": [
+    "q-swift6-1",
+    "q-swift6-2",
+    "q-swift6-3",
+    "q-swift6-4",
+    "q-swift6-5"
+  ]
+}

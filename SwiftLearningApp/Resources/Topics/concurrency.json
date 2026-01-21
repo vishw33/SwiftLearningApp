@@ -1,0 +1,65 @@
+{
+  "id": "concurrency",
+  "title": "Concurrency Handling (Latest)",
+  "description": "Advanced concurrency patterns in Swift 6. Learn about actors, structured concurrency, task groups, and advanced techniques.",
+  "sections": [
+    {
+      "id": "actors-vs-classes",
+      "title": "Actors vs Classes",
+      "content": "Understanding when to use actors versus classes is crucial for proper concurrency design.\n\nActors:\n- Use for mutable shared state\n- Provide isolation guarantees\n- Require await for external access\n- Prevent data races\n\nClasses:\n- Use for reference semantics\n- Must be Sendable if crossing boundaries\n- Can be marked @unchecked Sendable if thread-safe\n- Better for immutable or single-threaded use",
+      "codeExampleIds": ["actor-vs-class", "when-to-use-actor"]
+    },
+    {
+      "id": "structured-concurrency",
+      "title": "Structured Concurrency",
+      "content": "Structured concurrency ensures that tasks are properly managed and cancelled. It's the foundation of Swift's concurrency model.\n\nPrinciples:\n- Tasks have clear parent-child relationships\n- Cancellation propagates automatically\n- Errors propagate through task hierarchy\n- No orphaned tasks",
+      "codeExampleIds": ["structured-basic", "structured-hierarchy"]
+    },
+    {
+      "id": "task-groups",
+      "title": "Task Groups and Async Sequences",
+      "content": "Task groups allow you to spawn multiple child tasks and wait for them all to complete. Async sequences provide a way to work with streams of asynchronous values.\n\nUse cases:\n- Parallel processing of collections\n- Downloading multiple files\n- Processing streams of data\n- Coordinating multiple async operations",
+      "codeExampleIds": ["task-group-basic", "async-sequence", "task-group-parallel"]
+    },
+    {
+      "id": "actor-reentrancy",
+      "title": "Actor Reentrancy",
+      "content": "Actor methods are reentrant, meaning if a method suspends (with await), the actor can process other calls. This is important for understanding actor behavior.\n\nImplications:\n- State can change between suspension points\n- Need to validate state after await\n- Design for reentrancy\n- Use actor-local state carefully",
+      "codeExampleIds": ["reentrancy-example", "reentrancy-handling"]
+    },
+    {
+      "id": "cross-actor",
+      "title": "Cross-Actor Communication",
+      "content": "Communication between actors requires careful design to avoid deadlocks and ensure proper isolation.\n\nPatterns:\n- Async message passing\n- Actor protocols\n- Avoiding circular dependencies\n- Proper error propagation",
+      "codeExampleIds": ["cross-actor-comm", "actor-protocol"]
+    },
+    {
+      "id": "advanced-patterns",
+      "title": "Advanced Patterns",
+      "content": "Advanced concurrency patterns for complex scenarios:\n\n- Actor pools for load distribution\n- Throttling and debouncing with async sequences\n- Producer-consumer patterns\n- Coordination between multiple actors\n- Custom executors",
+      "codeExampleIds": ["advanced-pattern-1", "advanced-pattern-2"]
+    }
+  ],
+  "codeExampleIds": [
+    "actor-vs-class",
+    "when-to-use-actor",
+    "structured-basic",
+    "structured-hierarchy",
+    "task-group-basic",
+    "async-sequence",
+    "task-group-parallel",
+    "reentrancy-example",
+    "reentrancy-handling",
+    "cross-actor-comm",
+    "actor-protocol",
+    "advanced-pattern-1",
+    "advanced-pattern-2"
+  ],
+  "questionIds": [
+    "q-concurrency-1",
+    "q-concurrency-2",
+    "q-concurrency-3",
+    "q-concurrency-4",
+    "q-concurrency-5"
+  ]
+}

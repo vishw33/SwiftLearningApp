@@ -1,0 +1,75 @@
+{
+  "id": "observable-observableobject",
+  "title": "@Observable vs ObservableObject",
+  "description": "Complete comparison of @Observable macro and ObservableObject: implementation, usage, migration, property wrappers, and when to use each.",
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Overview: Two Approaches",
+      "content": "SwiftUI offers two ways to make data observable:\n\n**1. ObservableObject (iOS 13+)**:\n- Protocol-based approach\n- Requires `@Published` for each property\n- Uses `@StateObject` / `@ObservedObject`\n- More boilerplate\n\n**2. @Observable (iOS 17+)**:\n- Macro-based approach\n- Automatic property observation\n- Uses `@State` / `@Bindable`\n- Less boilerplate, more modern\n\n**Key Difference**:\n- ObservableObject: Explicit `@Published` properties\n- @Observable: Automatic observation of stored properties",
+      "codeExampleIds": ["observable-overview"]
+    },
+    {
+      "id": "observableobject",
+      "title": "ObservableObject Implementation",
+      "content": "**Traditional Approach** (iOS 13+):\n\n```swift\nimport SwiftUI\nimport Combine\n\nclass ViewModel: ObservableObject {\n    @Published var count: Int = 0\n    @Published var name: String = \"\"\n    @Published var isEnabled: Bool = true\n    \n    func increment() {\n        count += 1\n    }\n}\n\nstruct ContentView: View {\n    @StateObject private var viewModel = ViewModel()\n    \n    var body: some View {\n        VStack {\n            Text(\"Count: \\(viewModel.count)\")\n            Button(\"Increment\") {\n                viewModel.increment()\n            }\n        }\n    }\n}\n```\n\n**Key Points**:\n- Must conform to `ObservableObject`\n- Each property needs `@Published`\n- Use `@StateObject` for ownership\n- Use `@ObservedObject` for passed instances\n- Use `@EnvironmentObject` for shared instances",
+      "codeExampleIds": ["observableobject-example"]
+    },
+    {
+      "id": "observable-macro",
+      "title": "@Observable Macro Implementation",
+      "content": "**Modern Approach** (iOS 17+):\n\n```swift\nimport SwiftUI\nimport Observation\n\n@Observable\nclass ViewModel {\n    var count: Int = 0  // Automatically observed!\n    var name: String = \"\"\n    var isEnabled: Bool = true\n    \n    func increment() {\n        count += 1\n    }\n}\n\nstruct ContentView: View {\n    @State private var viewModel = ViewModel()  // Use @State!\n    \n    var body: some View {\n        VStack {\n            Text(\"Count: \\(viewModel.count)\")\n            Button(\"Increment\") {\n                viewModel.increment()\n            }\n        }\n    }\n}\n```\n\n**Key Points**:\n- Mark class with `@Observable` macro\n- No `@Published` needed\n- Use `@State` for ownership\n- Use `@Bindable` for two-way binding\n- Use `.environment()` for shared instances",
+      "codeExampleIds": ["observable-example"]
+    },
+    {
+      "id": "property-wrappers",
+      "title": "Property Wrappers Comparison",
+      "content": "**ObservableObject**:\n```swift\n// In ViewModel\n@Published var count: Int = 0\n\n// In View\n@StateObject var viewModel = ViewModel()  // Ownership\n@ObservedObject var viewModel: ViewModel  // Passed instance\n@EnvironmentObject var viewModel: ViewModel  // Shared\n```\n\n**@Observable**:\n```swift\n// In ViewModel\nvar count: Int = 0  // No wrapper needed!\n\n// In View\n@State var viewModel = ViewModel()  // Ownership\nvar viewModel: ViewModel  // Passed instance (plain var!)\n@Bindable var viewModel: ViewModel  // For bindings\n.environment(viewModel)  // Shared\n```\n\n**Key Differences**:\n- @Observable: Simpler, less boilerplate\n- ObservableObject: More explicit, more control\n- @Observable: Plain `var` for passed instances\n- ObservableObject: Always needs property wrapper",
+      "codeExampleIds": ["property-wrappers"]
+    },
+    {
+      "id": "migration",
+      "title": "Migrating from ObservableObject to @Observable",
+      "content": "**Migration Steps**:\n\n1. **Change Class Declaration**:\n```swift\n// Before\nclass ViewModel: ObservableObject {\n\n// After\n@Observable\nclass ViewModel {\n```\n\n2. **Remove @Published**:\n```swift\n// Before\n@Published var count: Int = 0\n\n// After\nvar count: Int = 0  // Automatically observed\n```\n\n3. **Update Property Wrappers in Views**:\n```swift\n// Before\n@StateObject private var viewModel = ViewModel()\n@ObservedObject var viewModel: ViewModel\n@EnvironmentObject var viewModel: ViewModel\n\n// After\n@State private var viewModel = ViewModel()\nvar viewModel: ViewModel  // Plain var!\n// Use .environment(viewModel) instead of @EnvironmentObject\n```\n\n4. **Update Bindings**:\n```swift\n// Before\nTextField(\"Name\", text: $viewModel.name)\n\n// After\n@Bindable var viewModel: ViewModel\nTextField(\"Name\", text: $viewModel.name)\n```",
+      "codeExampleIds": ["migration-example"]
+    },
+    {
+      "id": "when-to-use",
+      "title": "When to Use Each",
+      "content": "**Use ObservableObject When**:\n- Supporting iOS 13-16\n- Need explicit control over published properties\n- Working with Combine publishers\n- Legacy codebase\n- Need `objectWillChange` publisher\n\n**Use @Observable When**:\n- Targeting iOS 17+\n- Want less boilerplate\n- Modern Swift codebase\n- Simpler property observation\n- Better performance (macro expansion)\n\n**Decision Matrix**:\n- iOS 17+ only? → Use @Observable\n- Need iOS 13-16 support? → Use ObservableObject\n- New project? → Use @Observable\n- Existing project? → Consider migration",
+      "codeExampleIds": ["when-to-use"]
+    },
+    {
+      "id": "advanced-features",
+      "title": "Advanced Features",
+      "content": "**ObservableObject Advanced**:\n```swift\nclass ViewModel: ObservableObject {\n    @Published var count = 0\n    \n    // Manual change notification\n    func update() {\n        objectWillChange.send()\n    }\n    \n    // Combine integration\n    var cancellables = Set<AnyCancellable>()\n    \n    init() {\n        $count.sink { newValue in\n            print(\"Count changed: \\(newValue)\")\n        }.store(in: &cancellables)\n    }\n}\n```\n\n**@Observable Advanced**:\n```swift\n@Observable\nclass ViewModel {\n    var count = 0\n    \n    // Computed properties are observed if they use stored properties\n    var doubled: Int { count * 2 }\n    \n    // Non-observed (use @ObservationIgnored)\n    @ObservationIgnored var cache: [String: Any] = []\n}\n```\n\n**Nested Objects**:\n- ObservableObject: Works well with nested\n- @Observable: Limited support, use carefully",
+      "codeExampleIds": ["advanced-features"]
+    },
+    {
+      "id": "common-mistakes",
+      "title": "Common Mistakes",
+      "content": "**Mistake 1: Using @StateObject with @Observable**:\n```swift\n// WRONG\n@Observable\nclass ViewModel { }\n\n@StateObject var viewModel = ViewModel()  // Error!\n\n// CORRECT\n@State var viewModel = ViewModel()\n```\n\n**Mistake 2: Using @Published with @Observable**:\n```swift\n// WRONG\n@Observable\nclass ViewModel {\n    @Published var count = 0  // Not needed!\n}\n\n// CORRECT\n@Observable\nclass ViewModel {\n    var count = 0  // Automatically observed\n}\n```\n\n**Mistake 3: Forgetting @State in Root View**:\n```swift\n// WRONG\nstruct ContentView: View {\n    var viewModel = ViewModel()  // Recreated each render!\n}\n\n// CORRECT\n@State private var viewModel = ViewModel()\n```\n\n**Mistake 4: Mixing Approaches**:\n- Don't mix ObservableObject and @Observable in same view model\n- Choose one approach and stick with it",
+      "codeExampleIds": ["common-mistakes"]
+    }
+  ],
+  "codeExampleIds": [
+    "observable-overview",
+    "observableobject-example",
+    "observable-example",
+    "property-wrappers",
+    "migration-example",
+    "when-to-use",
+    "advanced-features",
+    "common-mistakes"
+  ],
+  "questionIds": [
+    "q-observable-1",
+    "q-observable-2",
+    "q-observable-3",
+    "q-observable-4",
+    "q-observable-5",
+    "q-observable-6",
+    "q-observable-7",
+    "q-observable-8"
+  ]
+}

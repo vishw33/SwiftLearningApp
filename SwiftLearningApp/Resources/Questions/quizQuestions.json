@@ -1,0 +1,1575 @@
+[
+  {
+    "id": "q-async-1",
+    "topicId": "async-await",
+    "type": "multipleChoice",
+    "question": "What is the main advantage of async/await over completion handlers?",
+    "options": [
+      "Better performance",
+      "Eliminates callback hell and provides structured concurrency",
+      "Only works on iOS 15+",
+      "Requires less code"
+    ],
+    "correctAnswer": "Eliminates callback hell and provides structured concurrency",
+    "explanation": "Async/await eliminates nested callbacks (callback hell) and provides structured concurrency, which ensures proper task lifecycle management and cancellation.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-async-2",
+    "topicId": "async-await",
+    "type": "trueFalse",
+    "question": "In Swift 6, you can call an async function from a synchronous function without any special handling.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "You cannot directly call an async function from a synchronous context. You must either make the calling function async or use Task { } to create an async context.",
+    "difficulty": "medium",
+    "codeSnippet": "func syncFunction() {\n    // Cannot directly call async function here\n    // await asyncFunction() // Error!\n}"
+  },
+  {
+    "id": "q-async-3",
+    "topicId": "async-await",
+    "type": "codeCompletion",
+    "question": "Complete this code to properly handle task cancellation:",
+    "options": null,
+    "correctAnswer": "try Task.checkCancellation()",
+    "explanation": "Task.checkCancellation() throws a CancellationError if the task has been cancelled. This should be called in loops or long-running operations to allow proper cancellation.",
+    "difficulty": "medium",
+    "codeSnippet": "for i in 0..<1000000 {\n    // Add cancellation check here\n    process(i)\n}"
+  },
+  {
+    "id": "q-async-4",
+    "topicId": "async-await",
+    "type": "bugIdentification",
+    "question": "What's wrong with this code?",
+    "options": [
+      "Nothing, it's correct",
+      "Missing await keyword",
+      "Cannot use try in async function",
+      "Task.detached is deprecated"
+    ],
+    "correctAnswer": "Missing await keyword",
+    "explanation": "The fetchData() function is async and returns a value, so it must be called with await. The correct code should be: let data = await fetcher.fetchData(from: url)",
+    "difficulty": "hard",
+    "codeSnippet": "let fetcher = DataFetcher()\nlet data = fetcher.fetchData(from: url) // Missing await!"
+  },
+  {
+    "id": "q-async-5",
+    "topicId": "async-await",
+    "type": "multipleChoice",
+    "question": "What happens if you don't check for task cancellation in a long-running loop?",
+    "options": [
+      "The task will automatically cancel",
+      "The task will continue running even after cancellation is requested, wasting resources",
+      "The app will crash",
+      "Nothing, cancellation always works automatically"
+    ],
+    "correctAnswer": "The task will continue running even after cancellation is requested, wasting resources",
+    "explanation": "Tasks only check for cancellation at suspension points (await). In tight loops without await, you must manually check Task.isCancelled or use Task.checkCancellation() to respect cancellation requests.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-swift6-1",
+    "topicId": "swift6-migration",
+    "type": "multipleChoice",
+    "question": "In Swift 6, what happens if you call an actor method without await?",
+    "options": [
+      "It works fine if the method doesn't suspend",
+      "Compiler error - await is required",
+      "Runtime warning",
+      "It depends on the actor type"
+    ],
+    "correctAnswer": "Compiler error - await is required",
+    "explanation": "Swift 6 enforces strict concurrency. All actor method calls from outside the actor must use await, even if the method doesn't actually suspend. This prevents data races.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-swift6-2",
+    "topicId": "swift6-migration",
+    "type": "trueFalse",
+    "question": "@MainActor ensures that code always runs on the main thread immediately.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "@MainActor provides isolation guarantees but doesn't guarantee immediate execution on the main thread. It ensures thread safety, but execution might be scheduled. Also, heavy work on @MainActor can still block the UI.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-swift6-3",
+    "topicId": "swift6-migration",
+    "type": "multipleChoice",
+    "question": "What should you use when migrating from ObservableObject to @Observable?",
+    "options": [
+      "@StateObject",
+      "@ObservedObject",
+      "@State",
+      "@Published"
+    ],
+    "correctAnswer": "@State",
+    "explanation": "When using @Observable, you should use @State (not @StateObject) to hold the observable instance in your view. @StateObject and @ObservedObject are for ObservableObject types.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-swift6-4",
+    "topicId": "swift6-migration",
+    "type": "bugIdentification",
+    "question": "What's the issue with this code in Swift 6?",
+    "options": [
+      "Nothing, it's correct",
+      "Class needs to be Sendable",
+      "Cannot use class with async",
+      "Missing @MainActor"
+    ],
+    "correctAnswer": "Class needs to be Sendable",
+    "explanation": "In Swift 6, types crossing actor boundaries must conform to Sendable. This class is being passed to an async function, so it needs to be Sendable. Options: make it a struct, mark as @unchecked Sendable, or use an actor.",
+    "difficulty": "hard",
+    "codeSnippet": "class DataManager {\n    var data: [String] = []\n}\n\nfunc process(data: DataManager) async {\n    // Error: 'DataManager' cannot be sent across actors\n}"
+  },
+  {
+    "id": "q-swift6-5",
+    "topicId": "swift6-migration",
+    "type": "multipleChoice",
+    "question": "What is @preconcurrency used for?",
+    "options": [
+      "To mark code as thread-safe",
+      "To gradually migrate to Swift 6 by suppressing concurrency warnings",
+      "To enable strict concurrency checking",
+      "To mark actors"
+    ],
+    "correctAnswer": "To gradually migrate to Swift 6 by suppressing concurrency warnings",
+    "explanation": "@preconcurrency is used when importing legacy modules that haven't been migrated to Swift 6 yet. It suppresses concurrency warnings, allowing gradual migration. It's not a permanent solution.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-mistakes-1",
+    "topicId": "common-mistakes",
+    "type": "multipleChoice",
+    "question": "What is a common mistake when using @Observable?",
+    "options": [
+      "Using @Published properties",
+      "Using @StateObject instead of @State",
+      "Both A and B",
+      "Using @State is wrong"
+    ],
+    "correctAnswer": "Both A and B",
+    "explanation": "Common mistakes: 1) Using @Published with @Observable (not needed - @Observable tracks properties automatically), 2) Using @StateObject instead of @State (should use @State for @Observable types).",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-mistakes-2",
+    "topicId": "common-mistakes",
+    "type": "trueFalse",
+    "question": "Doing heavy computation on @MainActor is fine as long as you use async/await.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "Heavy computation on @MainActor will block the UI thread, even with async/await. You should move heavy work off @MainActor using Task.detached and only update UI properties on @MainActor.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-mistakes-3",
+    "topicId": "common-mistakes",
+    "type": "bugIdentification",
+    "question": "What's the problem with this code?",
+    "options": [
+      "Nothing, it's correct",
+      "Task won't cancel properly",
+      "Cannot use Task in view model",
+      "Missing error handling"
+    ],
+    "correctAnswer": "Task won't cancel properly",
+    "explanation": "The loop doesn't check for cancellation. Even if the task is cancelled, the loop will continue running. Add try Task.checkCancellation() inside the loop to respect cancellation.",
+    "difficulty": "hard",
+    "codeSnippet": "Task {\n    for i in 0..<1000000 {\n        process(i) // No cancellation check!\n    }\n}"
+  },
+  {
+    "id": "q-mistakes-4",
+    "topicId": "common-mistakes",
+    "type": "multipleChoice",
+    "question": "What causes a data race?",
+    "options": [
+      "Using async/await",
+      "Multiple threads accessing shared mutable state without synchronization",
+      "Using actors",
+      "Using @MainActor"
+    ],
+    "correctAnswer": "Multiple threads accessing shared mutable state without synchronization",
+    "explanation": "Data races occur when multiple threads access and modify shared mutable state concurrently without proper synchronization (like actors, locks, or queues).",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-mistakes-5",
+    "topicId": "common-mistakes",
+    "type": "multipleChoice",
+    "question": "Why might nested @Observable objects cause issues?",
+    "options": [
+      "They're not supported and can lead to observation problems",
+      "They work perfectly fine",
+      "They're slower",
+      "They require @Published"
+    ],
+    "correctAnswer": "They're not supported and can lead to observation problems",
+    "explanation": "Nested @Observable objects are not fully supported by the Observation framework. Prefer composition over nested observables, or use @State for nested objects.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-concurrency-1",
+    "topicId": "concurrency",
+    "type": "multipleChoice",
+    "question": "When should you use an actor instead of a class?",
+    "options": [
+      "Always use actors",
+      "When you need mutable shared state that must be thread-safe",
+      "When you need reference semantics",
+      "Never use actors"
+    ],
+    "correctAnswer": "When you need mutable shared state that must be thread-safe",
+    "explanation": "Actors are designed for mutable shared state that needs thread-safety guarantees. For immutable data or single-threaded use, classes or structs may be more appropriate.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-concurrency-2",
+    "topicId": "concurrency",
+    "type": "trueFalse",
+    "question": "Actor methods are reentrant, meaning if a method suspends, the actor can process other calls.",
+    "options": ["True", "False"],
+    "correctAnswer": "True",
+    "explanation": "Yes, actor methods are reentrant. If a method suspends (with await), the actor can process other pending calls. This means you need to be careful about state consistency between suspension points.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-concurrency-3",
+    "topicId": "concurrency",
+    "type": "multipleChoice",
+    "question": "What is structured concurrency?",
+    "options": [
+      "A way to structure your code",
+      "A concurrency model where tasks have clear parent-child relationships and proper lifecycle management",
+      "Using only actors",
+      "A deprecated feature"
+    ],
+    "correctAnswer": "A concurrency model where tasks have clear parent-child relationships and proper lifecycle management",
+    "explanation": "Structured concurrency ensures tasks have clear hierarchies, automatic cancellation propagation, error handling, and no orphaned tasks. It's the foundation of Swift's concurrency model.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-concurrency-4",
+    "topicId": "concurrency",
+    "type": "codeCompletion",
+    "question": "Complete this code to create a task group that processes items in parallel:",
+    "options": null,
+    "correctAnswer": "await withTaskGroup",
+    "explanation": "withTaskGroup creates a group of child tasks that can run in parallel. You add tasks to the group and await their completion. This is the structured way to do parallel work.",
+    "difficulty": "hard",
+    "codeSnippet": "let items = [1, 2, 3, 4, 5]\n// Create task group here\n(of: Int.self) { group in\n    for item in items {\n        group.addTask {\n            process(item)\n        }\n    }\n}"
+  },
+  {
+    "id": "q-concurrency-5",
+    "topicId": "concurrency",
+    "type": "multipleChoice",
+    "question": "What is an async sequence?",
+    "options": [
+      "A regular array",
+      "A sequence that produces values asynchronously over time",
+      "A type of actor",
+      "A deprecated feature"
+    ],
+    "correctAnswer": "A sequence that produces values asynchronously over time",
+    "explanation": "Async sequences produce values asynchronously over time. You iterate over them with for try await. They're useful for streams of data, like network responses or sensor readings.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-basics-1",
+    "topicId": "swift-basics",
+    "type": "multipleChoice",
+    "question": "What is the default access level in Swift?",
+    "options": [
+      "private",
+      "fileprivate",
+      "internal",
+      "public"
+    ],
+    "correctAnswer": "internal",
+    "explanation": "Internal is the default access level in Swift. It allows access anywhere within the same module but not from outside.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-basics-2",
+    "topicId": "swift-basics",
+    "type": "trueFalse",
+    "question": "In Swift, you must always explicitly declare the type of a variable.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "Swift has strong type inference. You can let Swift infer the type: `let name = \"Swift\"` is valid and Swift infers it as String.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-basics-3",
+    "topicId": "swift-basics",
+    "type": "multipleChoice",
+    "question": "What is the difference between `var` and `let` in Swift?",
+    "options": [
+      "`var` is for constants, `let` is for variables",
+      "`var` allows reassignment, `let` does not",
+      "They are identical",
+      "`var` is faster than `let`"
+    ],
+    "correctAnswer": "`var` allows reassignment, `let` does not",
+    "explanation": "`var` declares a variable that can be reassigned, while `let` declares a constant that cannot be changed after initialization.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-basics-4",
+    "topicId": "swift-basics",
+    "type": "multipleChoice",
+    "question": "What does the `??` operator do in Swift?",
+    "options": [
+      "Logical OR",
+      "Nil coalescing - provides default value if optional is nil",
+      "Optional chaining",
+      "Force unwrap"
+    ],
+    "correctAnswer": "Nil coalescing - provides default value if optional is nil",
+    "explanation": "The `??` operator is the nil coalescing operator. It returns the left side if not nil, otherwise returns the right side: `let value = optional ?? defaultValue`",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-basics-5",
+    "topicId": "swift-basics",
+    "type": "codeCompletion",
+    "question": "Complete this code to safely unwrap the optional:",
+    "options": null,
+    "correctAnswer": "if let name = optionalName",
+    "explanation": "Optional binding with `if let` safely unwraps an optional. If the value is nil, the block doesn't execute.",
+    "difficulty": "medium",
+    "codeSnippet": "var optionalName: String? = \"Swift\"\n// Complete this line\n{\n    print(name)\n}"
+  },
+  {
+    "id": "q-basics-6",
+    "topicId": "swift-basics",
+    "type": "multipleChoice",
+    "question": "Which collection type guarantees unique values?",
+    "options": [
+      "Array",
+      "Set",
+      "Dictionary",
+      "Tuple"
+    ],
+    "correctAnswer": "Set",
+    "explanation": "Set is an unordered collection that guarantees unique values. Arrays allow duplicates, dictionaries are key-value pairs, and tuples are fixed-size collections.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-basics-7",
+    "topicId": "swift-basics",
+    "type": "trueFalse",
+    "question": "Swift's switch statement requires a `break` statement for each case.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "Swift's switch statement does not require break statements. Cases don't fall through by default. Use `fallthrough` if you want fall-through behavior.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-basics-8",
+    "topicId": "swift-basics",
+    "type": "multipleChoice",
+    "question": "What is the main difference between structs and classes in Swift?",
+    "options": [
+      "Structs are reference types, classes are value types",
+      "Structs are value types, classes are reference types",
+      "They are identical",
+      "Structs support inheritance, classes don't"
+    ],
+    "correctAnswer": "Structs are value types, classes are reference types",
+    "explanation": "Structs are value types (copied when assigned), while classes are reference types (shared reference when assigned). Swift prefers structs for most use cases.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-access-1",
+    "topicId": "access-specifiers",
+    "type": "multipleChoice",
+    "question": "What is the most restrictive access level in Swift?",
+    "options": [
+      "public",
+      "internal",
+      "fileprivate",
+      "private"
+    ],
+    "correctAnswer": "private",
+    "explanation": "Private is the most restrictive access level. It allows access only within the enclosing declaration.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-access-2",
+    "topicId": "access-specifiers",
+    "type": "multipleChoice",
+    "question": "Which access level allows a class to be subclassed from other modules?",
+    "options": [
+      "public",
+      "open",
+      "internal",
+      "private"
+    ],
+    "correctAnswer": "open",
+    "explanation": "Only `open` allows classes to be subclassed from other modules. `public` classes can be used but not subclassed outside the module.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-access-3",
+    "topicId": "access-specifiers",
+    "type": "trueFalse",
+    "question": "A `public` class can be subclassed from other modules.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "A `public` class cannot be subclassed from other modules. Only `open` classes allow subclassing from other modules.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-access-4",
+    "topicId": "access-specifiers",
+    "type": "multipleChoice",
+    "question": "What is the difference between `fileprivate` and `private`?",
+    "options": [
+      "They are identical",
+      "`fileprivate` allows access within the same file, `private` only within the declaration",
+      "`private` is more permissive than `fileprivate`",
+      "`fileprivate` is deprecated"
+    ],
+    "correctAnswer": "`fileprivate` allows access within the same file, `private` only within the declaration",
+    "explanation": "`fileprivate` allows access anywhere in the same source file, while `private` restricts access to only within the enclosing declaration.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-access-5",
+    "topicId": "access-specifiers",
+    "type": "bugIdentification",
+    "question": "What's wrong with this code?",
+    "options": [
+      "Nothing, it's correct",
+      "Cannot use `open` on a struct",
+      "Missing access modifier on method",
+      "`open` should be `public`"
+    ],
+    "correctAnswer": "Cannot use `open` on a struct",
+    "explanation": "`open` can only be used with classes, not structs or enums. Structs don't support inheritance, so `open` doesn't apply.",
+    "difficulty": "hard",
+    "codeSnippet": "open struct MyStruct {\n    var value: Int\n}"
+  },
+  {
+    "id": "q-access-6",
+    "topicId": "access-specifiers",
+    "type": "multipleChoice",
+    "question": "What does `private(set)` mean?",
+    "options": [
+      "The property is completely private",
+      "Read access is public, write access is private",
+      "The setter is private, getter is public",
+      "It's invalid syntax"
+    ],
+    "correctAnswer": "Read access is public, write access is private",
+    "explanation": "`private(set)` makes the property readable from outside but only writable from within the type. This is useful for read-only properties.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-access-7",
+    "topicId": "access-specifiers",
+    "type": "multipleChoice",
+    "question": "When should you use `internal` access level?",
+    "options": [
+      "Never, it's deprecated",
+      "For framework APIs",
+      "For app-level code where you don't need external access",
+      "Only for private implementation details"
+    ],
+    "correctAnswer": "For app-level code where you don't need external access",
+    "explanation": "`internal` is the default and is perfect for app-level code. It allows access within the module but not from outside, which is ideal for most app code.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-access-8",
+    "topicId": "access-specifiers",
+    "type": "trueFalse",
+    "question": "A subclass can have a higher access level than its superclass.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "A subclass cannot have a higher access level than its superclass. The subclass's access level must be the same or lower.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dynamic-1",
+    "topicId": "dynamic-library",
+    "type": "multipleChoice",
+    "question": "When is a dynamic library loaded?",
+    "options": [
+      "At compile time",
+      "At runtime when the app launches",
+      "Only when explicitly requested",
+      "Never, they're linked statically"
+    ],
+    "correctAnswer": "At runtime when the app launches",
+    "explanation": "Dynamic libraries are loaded at runtime when the app launches. This is different from static libraries which are linked at compile time.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dynamic-2",
+    "topicId": "dynamic-library",
+    "type": "multipleChoice",
+    "question": "What is a key advantage of dynamic libraries?",
+    "options": [
+      "Faster app launch",
+      "Smaller app binary size and code sharing",
+      "No runtime dependencies",
+      "Simpler build process"
+    ],
+    "correctAnswer": "Smaller app binary size and code sharing",
+    "explanation": "Dynamic libraries reduce app binary size because code is loaded at runtime. They can also be shared across multiple processes, saving memory.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dynamic-3",
+    "topicId": "dynamic-library",
+    "type": "trueFalse",
+    "question": "Dynamic libraries always result in faster app launch times.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "Dynamic libraries actually slow down app launch because they must be loaded at runtime. Static libraries are faster to launch since code is already in the binary.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dynamic-4",
+    "topicId": "dynamic-library",
+    "type": "multipleChoice",
+    "question": "When should you use a dynamic library?",
+    "options": [
+      "For single app projects only",
+      "When you need code sharing across multiple apps or extensions",
+      "When launch time is critical",
+      "Never, static is always better"
+    ],
+    "correctAnswer": "When you need code sharing across multiple apps or extensions",
+    "explanation": "Dynamic libraries are ideal when you need to share code across multiple apps, app extensions, or when building frameworks for distribution.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dynamic-5",
+    "topicId": "dynamic-library",
+    "type": "multipleChoice",
+    "question": "In Swift Package Manager, how do you specify a dynamic library?",
+    "options": [
+      ".library(type: .dynamic)",
+      ".dynamicLibrary()",
+      ".framework(type: .dynamic)",
+      "Dynamic is the default"
+    ],
+    "correctAnswer": ".library(type: .dynamic)",
+    "explanation": "In Package.swift, you specify a dynamic library with `.library(name: \"MyLib\", type: .dynamic, targets: [\"MyLib\"])`",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dynamic-6",
+    "topicId": "dynamic-library",
+    "type": "trueFalse",
+    "question": "iOS apps can load arbitrary dynamic libraries from the internet at runtime.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "iOS apps cannot load arbitrary dynamic libraries. All dynamic libraries must be embedded in the app bundle and signed. System frameworks are exceptions.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-static-1",
+    "topicId": "static-library",
+    "type": "multipleChoice",
+    "question": "When is a static library linked?",
+    "options": [
+      "At runtime",
+      "At compile time into the app binary",
+      "Only when needed",
+      "Never"
+    ],
+    "correctAnswer": "At compile time into the app binary",
+    "explanation": "Static libraries are linked at compile time, meaning their code becomes part of the final app binary.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-static-2",
+    "topicId": "static-library",
+    "type": "multipleChoice",
+    "question": "What is a key advantage of static libraries?",
+    "options": [
+      "Smaller app binary",
+      "Faster app launch time",
+      "Code sharing across processes",
+      "Can be updated without rebuilding"
+    ],
+    "correctAnswer": "Faster app launch time",
+    "explanation": "Static libraries result in faster app launch because code is already in the binary - no runtime loading needed.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-static-3",
+    "topicId": "static-library",
+    "type": "trueFalse",
+    "question": "Static libraries are better for app extensions because they share code in memory.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "Static libraries are NOT better for extensions. Each extension gets its own copy of the static library code, increasing memory usage. Dynamic libraries are better for sharing.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-static-4",
+    "topicId": "static-library",
+    "type": "multipleChoice",
+    "question": "When should you choose a static library over a dynamic one?",
+    "options": [
+      "When you have multiple app extensions",
+      "When app launch time is critical",
+      "When you need to share code across apps",
+      "When building a framework for distribution"
+    ],
+    "correctAnswer": "When app launch time is critical",
+    "explanation": "Choose static libraries when launch time is critical, for single app projects, or when you don't need code sharing.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-static-5",
+    "topicId": "static-library",
+    "type": "multipleChoice",
+    "question": "What file extension do static libraries typically have?",
+    "options": [
+      ".dylib",
+      ".framework",
+      ".a",
+      ".static"
+    ],
+    "correctAnswer": ".a",
+    "explanation": "Static libraries typically have the `.a` extension (archive). Dynamic libraries use `.dylib` or `.framework`.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-static-6",
+    "topicId": "static-library",
+    "type": "trueFalse",
+    "question": "Static libraries can be updated without rebuilding the app.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "Static libraries are embedded in the app binary at compile time, so updating them requires rebuilding the entire app.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-closure-1",
+    "topicId": "closures",
+    "type": "multipleChoice",
+    "question": "What is a closure in Swift?",
+    "options": [
+      "A type of class",
+      "A self-contained block of functionality that can be passed around",
+      "A way to close a file",
+      "A deprecated feature"
+    ],
+    "correctAnswer": "A self-contained block of functionality that can be passed around",
+    "explanation": "A closure is a self-contained block of functionality that can be passed around and used in your code, similar to blocks in Objective-C or lambdas in other languages.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-closure-2",
+    "topicId": "closures",
+    "type": "multipleChoice",
+    "question": "What does `@escaping` mean for a closure parameter?",
+    "options": [
+      "The closure must escape from the function",
+      "The closure is called after the function returns",
+      "The closure cannot capture values",
+      "The closure is synchronous only"
+    ],
+    "correctAnswer": "The closure is called after the function returns",
+    "explanation": "`@escaping` means the closure can be called after the function returns. This is required for closures stored as properties or passed to async operations.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-closure-3",
+    "topicId": "closures",
+    "type": "bugIdentification",
+    "question": "What's the problem with this closure?",
+    "options": [
+      "Nothing, it's correct",
+      "Missing @escaping",
+      "Retain cycle - should use [weak self]",
+      "Cannot capture self"
+    ],
+    "correctAnswer": "Retain cycle - should use [weak self]",
+    "explanation": "This creates a retain cycle. The closure strongly captures `self`, and if `storedClosure` is a property of `self`, they reference each other. Use `[weak self]` to break the cycle.",
+    "difficulty": "hard",
+    "codeSnippet": "class MyClass {\n    var storedClosure: (() -> Void)?\n    \n    func setup() {\n        storedClosure = {\n            self.doSomething()  // Retain cycle!\n        }\n    }\n}"
+  },
+  {
+    "id": "q-closure-4",
+    "topicId": "closures",
+    "type": "multipleChoice",
+    "question": "What is the difference between `weak` and `unowned` in capture lists?",
+    "options": [
+      "They are identical",
+      "`weak` is optional, `unowned` is not optional but unsafe",
+      "`unowned` is faster",
+      "`weak` cannot be used in closures"
+    ],
+    "correctAnswer": "`weak` is optional, `unowned` is not optional but unsafe",
+    "explanation": "`weak` creates an optional reference (becomes nil when object deallocates), while `unowned` is non-optional but crashes if accessed after deallocation.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-closure-5",
+    "topicId": "closures",
+    "type": "codeCompletion",
+    "question": "Complete this closure to capture `self` weakly:",
+    "options": null,
+    "correctAnswer": "[weak self]",
+    "explanation": "Use `[weak self]` in the capture list to create a weak reference, preventing retain cycles.",
+    "difficulty": "medium",
+    "codeSnippet": "asyncCall { // Add capture list here\n    self?.doWork()\n}"
+  },
+  {
+    "id": "q-closure-6",
+    "topicId": "closures",
+    "type": "multipleChoice",
+    "question": "What does this closure syntax mean: `numbers.map { $0 * 2 }`?",
+    "options": [
+      "Invalid syntax",
+      "Maps each number to its double using shorthand argument name",
+      "Filters numbers greater than 2",
+      "Reduces numbers to a single value"
+    ],
+    "correctAnswer": "Maps each number to its double using shorthand argument name",
+    "explanation": "This is a trailing closure with shorthand argument `$0` representing the first parameter. It doubles each number in the array.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-closure-7",
+    "topicId": "closures",
+    "type": "trueFalse",
+    "question": "Closures in Swift capture variables by value by default.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "Closures capture variables by reference by default. To capture by value, use a capture list like `[value = variable]`.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-closure-8",
+    "topicId": "closures",
+    "type": "bugIdentification",
+    "question": "What will this code print?",
+    "options": [
+      "0, 1, 2",
+      "3, 3, 3",
+      "Nothing, it crashes",
+      "Compiler error"
+    ],
+    "correctAnswer": "3, 3, 3",
+    "explanation": "All closures capture the same `i` variable by reference. By the time they execute, the loop has finished and `i` is 3. Fix by capturing by value: `[i = i]`.",
+    "difficulty": "expert",
+    "codeSnippet": "var closures: [() -> Int] = []\nfor i in 0..<3 {\n    closures.append { i }\n}\nclosures.forEach { print($0()) }"
+  },
+  {
+    "id": "q-closure-9",
+    "topicId": "closures",
+    "type": "multipleChoice",
+    "question": "What is an autoclosure?",
+    "options": [
+      "A closure that automatically executes",
+      "A closure that's automatically created from an expression",
+      "A closure that cannot escape",
+      "A deprecated feature"
+    ],
+    "correctAnswer": "A closure that's automatically created from an expression",
+    "explanation": "An autoclosure automatically wraps an expression in a closure, allowing delayed evaluation. Used in functions like `assert()`.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-closure-10",
+    "topicId": "closures",
+    "type": "multipleChoice",
+    "question": "Which higher-order function transforms each element of a collection?",
+    "options": [
+      "filter",
+      "map",
+      "reduce",
+      "forEach"
+    ],
+    "correctAnswer": "map",
+    "explanation": "`map` transforms each element of a collection. `filter` selects elements, `reduce` combines elements, and `forEach` performs side effects.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-memory-1",
+    "topicId": "memory-management",
+    "type": "multipleChoice",
+    "question": "What does ARC stand for?",
+    "options": [
+      "Automatic Reference Counting",
+      "Automatic Runtime Compilation",
+      "Asynchronous Resource Control",
+      "Active Resource Cleanup"
+    ],
+    "correctAnswer": "Automatic Reference Counting",
+    "explanation": "ARC (Automatic Reference Counting) is Swift's memory management system that automatically tracks and manages object lifetimes.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-memory-2",
+    "topicId": "memory-management",
+    "type": "multipleChoice",
+    "question": "What is the default reference type in Swift?",
+    "options": [
+      "weak",
+      "unowned",
+      "strong",
+      "There is no default"
+    ],
+    "correctAnswer": "strong",
+    "explanation": "Strong is the default reference type. All references are strong unless explicitly marked as `weak` or `unowned`.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-memory-3",
+    "topicId": "memory-management",
+    "type": "trueFalse",
+    "question": "A weak reference increases the reference count of an object.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "Weak references do NOT increase the reference count. They don't keep the object alive and automatically become nil when the object is deallocated.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-memory-4",
+    "topicId": "memory-management",
+    "type": "multipleChoice",
+    "question": "When should you use `unowned` instead of `weak`?",
+    "options": [
+      "Always prefer unowned",
+      "When you're certain the object won't be deallocated",
+      "When you need an optional reference",
+      "Never, always use weak"
+    ],
+    "correctAnswer": "When you're certain the object won't be deallocated",
+    "explanation": "Use `unowned` when you're certain the referenced object will outlive the reference. It's non-optional but crashes if accessed after deallocation.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-memory-5",
+    "topicId": "memory-management",
+    "type": "bugIdentification",
+    "question": "What's the problem with this code?",
+    "options": [
+      "Nothing, it's correct",
+      "Retain cycle between Person and Apartment",
+      "Cannot use optional in Apartment",
+      "Missing initialization"
+    ],
+    "correctAnswer": "Retain cycle between Person and Apartment",
+    "explanation": "Both `person.apartment` and `apartment.tenant` are strong references, creating a retain cycle. One should be `weak`.",
+    "difficulty": "hard",
+    "codeSnippet": "class Person {\n    var apartment: Apartment?\n}\n\nclass Apartment {\n    var tenant: Person?  // Strong reference!\n}"
+  },
+  {
+    "id": "q-memory-6",
+    "topicId": "memory-management",
+    "type": "multipleChoice",
+    "question": "What happens when you access an unowned reference after the object is deallocated?",
+    "options": [
+      "It becomes nil",
+      "The app crashes",
+      "Nothing, it's safe",
+      "It creates a new object"
+    ],
+    "correctAnswer": "The app crashes",
+    "explanation": "Accessing an unowned reference after deallocation causes a crash. Unlike weak references, unowned doesn't become nil - it assumes the object exists.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-memory-7",
+    "topicId": "memory-management",
+    "type": "multipleChoice",
+    "question": "In Swift, are properties atomic or nonatomic by default?",
+    "options": [
+      "Atomic",
+      "Nonatomic",
+      "It depends on the type",
+      "Swift doesn't have this concept"
+    ],
+    "correctAnswer": "Nonatomic",
+    "explanation": "Swift properties are nonatomic by default. For thread safety, use actors, locks, or serial queues. Atomic/nonatomic is an Objective-C concept.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-memory-8",
+    "topicId": "memory-management",
+    "type": "trueFalse",
+    "question": "ARC only applies to reference types (classes), not value types (structs).",
+    "options": ["True", "False"],
+    "correctAnswer": "True",
+    "explanation": "ARC only manages memory for reference types (classes). Value types (structs, enums) are copied, not referenced, so they don't need reference counting.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dispatch-1",
+    "topicId": "dispatch-queue",
+    "type": "multipleChoice",
+    "question": "What does GCD stand for?",
+    "options": [
+      "Grand Central Dispatch",
+      "General Concurrent Dispatch",
+      "Global Code Distribution",
+      "Generic Callback Delegate"
+    ],
+    "correctAnswer": "Grand Central Dispatch",
+    "explanation": "GCD (Grand Central Dispatch) is Apple's low-level API for managing concurrent operations and thread pools.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dispatch-2",
+    "topicId": "dispatch-queue",
+    "type": "multipleChoice",
+    "question": "What is the main queue in GCD?",
+    "options": [
+      "A concurrent queue",
+      "A serial queue that runs on the main thread",
+      "A background queue",
+      "A custom queue"
+    ],
+    "correctAnswer": "A serial queue that runs on the main thread",
+    "explanation": "The main queue is a serial queue that runs on the main thread. All UI updates must happen on this queue.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dispatch-3",
+    "topicId": "dispatch-queue",
+    "type": "trueFalse",
+    "question": "A serial queue can execute multiple tasks simultaneously.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "A serial queue executes one task at a time, in order. Concurrent queues can execute multiple tasks simultaneously.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dispatch-4",
+    "topicId": "dispatch-queue",
+    "type": "multipleChoice",
+    "question": "What happens when you call `sync` on a queue?",
+    "options": [
+      "The task runs asynchronously",
+      "The current thread blocks until the task completes",
+      "The task is cancelled",
+      "Nothing, it's ignored"
+    ],
+    "correctAnswer": "The current thread blocks until the task completes",
+    "explanation": "`sync` blocks the current thread until the task completes. Use carefully to avoid deadlocks, especially on the main thread.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dispatch-5",
+    "topicId": "dispatch-queue",
+    "type": "bugIdentification",
+    "question": "What will happen with this code?",
+    "options": [
+      "It works fine",
+      "Deadlock - the app will freeze",
+      "Compile error",
+      "Runtime crash"
+    ],
+    "correctAnswer": "Deadlock - the app will freeze",
+    "explanation": "Calling `sync` on the main queue from the main thread causes a deadlock. The main thread is blocked waiting for itself to finish.",
+    "difficulty": "hard",
+    "codeSnippet": "DispatchQueue.main.sync {\n    // This code never executes\n    print(\"Hello\")\n}"
+  },
+  {
+    "id": "q-dispatch-6",
+    "topicId": "dispatch-queue",
+    "type": "multipleChoice",
+    "question": "Which QoS level has the highest priority?",
+    "options": [
+      ".background",
+      ".utility",
+      ".userInitiated",
+      ".userInteractive"
+    ],
+    "correctAnswer": ".userInteractive",
+    "explanation": ".userInteractive has the highest priority, followed by .userInitiated, .default, .utility, and .background (lowest).",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dispatch-7",
+    "topicId": "dispatch-queue",
+    "type": "multipleChoice",
+    "question": "What is a dispatch barrier used for?",
+    "options": [
+      "To cancel tasks",
+      "To ensure exclusive access in a concurrent queue",
+      "To create serial queues",
+      "To prioritize tasks"
+    ],
+    "correctAnswer": "To ensure exclusive access in a concurrent queue",
+    "explanation": "A dispatch barrier ensures that when it executes, no other tasks in the concurrent queue are running. Useful for thread-safe writes.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dispatch-8",
+    "topicId": "dispatch-queue",
+    "type": "trueFalse",
+    "question": "You should always use `sync` instead of `async` for better performance.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "`sync` blocks the thread, which can hurt performance and cause deadlocks. Use `async` unless you specifically need to wait for the result.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-dispatch-9",
+    "topicId": "dispatch-queue",
+    "type": "codeCompletion",
+    "question": "Complete this code to update UI on the main thread:",
+    "options": null,
+    "correctAnswer": "DispatchQueue.main.async",
+    "explanation": "Use `DispatchQueue.main.async` to update UI from a background thread. This ensures the UI update happens on the main thread.",
+    "difficulty": "medium",
+    "codeSnippet": "DispatchQueue.global().async {\n    let data = fetchData()\n    // Update UI here\n    {\n        label.text = data\n    }\n}"
+  },
+  {
+    "id": "q-dispatch-10",
+    "topicId": "dispatch-queue",
+    "type": "multipleChoice",
+    "question": "What is the modern Swift alternative to GCD?",
+    "options": [
+      "NSOperationQueue",
+      "async/await and actors",
+      "Thread class",
+      "There is no alternative"
+    ],
+    "correctAnswer": "async/await and actors",
+    "explanation": "Swift's modern concurrency (async/await, actors, structured concurrency) is the recommended alternative to GCD for new code, providing better safety and readability.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-threading-1",
+    "topicId": "threading",
+    "type": "multipleChoice",
+    "question": "What is the main thread responsible for?",
+    "options": [
+      "Background processing",
+      "All UI updates and user interactions",
+      "Network requests",
+      "File I/O operations"
+    ],
+    "correctAnswer": "All UI updates and user interactions",
+    "explanation": "The main thread handles all UI updates and user interactions. Blocking it causes the UI to freeze.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-threading-2",
+    "topicId": "threading",
+    "type": "trueFalse",
+    "question": "It's safe to update UI from any thread in Swift.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "UI updates must happen on the main thread only. Updating UI from background threads can cause crashes or visual glitches.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-threading-3",
+    "topicId": "threading",
+    "type": "multipleChoice",
+    "question": "What is a race condition?",
+    "options": [
+      "A condition where threads race to finish first",
+      "When the outcome depends on unpredictable timing of thread execution",
+      "A type of queue",
+      "A Swift language feature"
+    ],
+    "correctAnswer": "When the outcome depends on unpredictable timing of thread execution",
+    "explanation": "A race condition occurs when the correctness of the program depends on the relative timing of events, leading to unpredictable behavior.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-threading-4",
+    "topicId": "threading",
+    "type": "multipleChoice",
+    "question": "How can you make code thread-safe?",
+    "options": [
+      "Use value types only",
+      "Use serial queues, locks, or actors",
+      "Avoid using multiple threads",
+      "All of the above"
+    ],
+    "correctAnswer": "Use serial queues, locks, or actors",
+    "explanation": "Thread safety can be achieved using serial queues (ensuring single-threaded access), locks (mutual exclusion), or actors (Swift 6's built-in thread safety).",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-threading-5",
+    "topicId": "threading",
+    "type": "bugIdentification",
+    "question": "What's the problem with this code?",
+    "options": [
+      "Nothing, it's correct",
+      "Race condition - not thread-safe",
+      "Cannot use var in class",
+      "Missing initialization"
+    ],
+    "correctAnswer": "Race condition - not thread-safe",
+    "explanation": "Multiple threads can call `increment()` simultaneously, causing race conditions. The `count += 1` operation is not atomic.",
+    "difficulty": "hard",
+    "codeSnippet": "class Counter {\n    var count = 0\n    \n    func increment() {\n        count += 1  // Not thread-safe!\n    }\n}"
+  },
+  {
+    "id": "q-threading-6",
+    "topicId": "threading",
+    "type": "trueFalse",
+    "question": "Value types (structs) are automatically thread-safe.",
+    "options": ["True", "False"],
+    "correctAnswer": "True",
+    "explanation": "Value types are copied, not shared, so each thread gets its own copy. This eliminates many threading issues, though you still need to be careful with shared mutable state.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-combinations-1",
+    "topicId": "serial-concurrent-sync-async",
+    "type": "multipleChoice",
+    "question": "How many combinations of queue type and execution mode exist?",
+    "options": [
+      "2",
+      "3",
+      "4",
+      "6"
+    ],
+    "correctAnswer": "4",
+    "explanation": "There are 4 combinations: Serial+Sync, Serial+Async, Concurrent+Sync, and Concurrent+Async.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-combinations-2",
+    "topicId": "serial-concurrent-sync-async",
+    "type": "multipleChoice",
+    "question": "Which combination guarantees task execution order?",
+    "options": [
+      "Concurrent + Async",
+      "Serial + Async",
+      "Concurrent + Sync",
+      "None guarantee order"
+    ],
+    "correctAnswer": "Serial + Async",
+    "explanation": "Serial queues guarantee that tasks execute one at a time in order, regardless of whether you use sync or async.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-combinations-3",
+    "topicId": "serial-concurrent-sync-async",
+    "type": "trueFalse",
+    "question": "Serial + Sync and Serial + Async both guarantee execution order.",
+    "options": ["True", "False"],
+    "correctAnswer": "True",
+    "explanation": "Both serial queue types guarantee execution order. The difference is that sync blocks the current thread, while async doesn't.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-combinations-4",
+    "topicId": "serial-concurrent-sync-async",
+    "type": "multipleChoice",
+    "question": "Which combination provides maximum parallelism without blocking?",
+    "options": [
+      "Serial + Sync",
+      "Serial + Async",
+      "Concurrent + Sync",
+      "Concurrent + Async"
+    ],
+    "correctAnswer": "Concurrent + Async",
+    "explanation": "Concurrent + Async allows multiple tasks to run simultaneously (parallelism) and doesn't block the current thread (async).",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-combinations-5",
+    "topicId": "serial-concurrent-sync-async",
+    "type": "bugIdentification",
+    "question": "What will happen with this code?",
+    "options": [
+      "Tasks run in parallel",
+      "Deadlock occurs",
+      "Tasks run sequentially",
+      "Compile error"
+    ],
+    "correctAnswer": "Deadlock occurs",
+    "explanation": "Calling `sync` on the same queue from within a task on that queue causes a deadlock. The queue is waiting for itself.",
+    "difficulty": "hard",
+    "codeSnippet": "let queue = DispatchQueue(label: \"queue\")\nqueue.sync {\n    queue.sync {  // Deadlock!\n        print(\"Never prints\")\n    }\n}"
+  },
+  {
+    "id": "q-combinations-6",
+    "topicId": "serial-concurrent-sync-async",
+    "type": "multipleChoice",
+    "question": "When would you use Serial + Sync?",
+    "options": [
+      "For parallel processing",
+      "For thread-safe access to shared resources when you need to wait",
+      "For maximum performance",
+      "Never, it's always wrong"
+    ],
+    "correctAnswer": "For thread-safe access to shared resources when you need to wait",
+    "explanation": "Serial + Sync is useful when you need thread-safe access and must wait for the operation to complete before continuing.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-combinations-7",
+    "topicId": "serial-concurrent-sync-async",
+    "type": "trueFalse",
+    "question": "Concurrent + Sync still allows tasks to run in parallel.",
+    "options": ["True", "False"],
+    "correctAnswer": "True",
+    "explanation": "Even with sync, a concurrent queue can run multiple tasks in parallel if there are multiple sync calls. However, each sync call still blocks until its specific task completes.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-combinations-8",
+    "topicId": "serial-concurrent-sync-async",
+    "type": "multipleChoice",
+    "question": "What is the most common GCD pattern?",
+    "options": [
+      "Serial + Sync",
+      "Serial + Async",
+      "Concurrent + Sync",
+      "Concurrent + Async"
+    ],
+    "correctAnswer": "Serial + Async",
+    "explanation": "Serial + Async is the most common pattern because it provides thread safety (serial) without blocking (async), which is ideal for most use cases.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-combinations-9",
+    "topicId": "serial-concurrent-sync-async",
+    "type": "codeCompletion",
+    "question": "Complete this to create a concurrent queue:",
+    "options": null,
+    "correctAnswer": "attributes: .concurrent",
+    "explanation": "To create a concurrent queue, you need to specify `attributes: .concurrent` in the DispatchQueue initializer.",
+    "difficulty": "medium",
+    "codeSnippet": "let queue = DispatchQueue(label: \"concurrent\", // Add attributes here\n)"
+  },
+  {
+    "id": "q-combinations-10",
+    "topicId": "serial-concurrent-sync-async",
+    "type": "multipleChoice",
+    "question": "Which combination should you avoid on the main thread?",
+    "options": [
+      "Serial + Async",
+      "Concurrent + Async",
+      "Any Sync operation",
+      "All of them"
+    ],
+    "correctAnswer": "Any Sync operation",
+    "explanation": "You should avoid any `sync` operation on the main thread, especially sync on the main queue itself, as it can cause deadlocks and freeze the UI.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-avkit-1",
+    "topicId": "avkit",
+    "type": "multipleChoice",
+    "question": "What is AVPlayer used for?",
+    "options": [
+      "Playing audio only",
+      "Playing video only",
+      "Playing both audio and video",
+      "Recording media"
+    ],
+    "correctAnswer": "Playing both audio and video",
+    "explanation": "AVPlayer can play both audio and video media. It's the core media player class in AVKit/AVFoundation.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-avkit-2",
+    "topicId": "avkit",
+    "type": "multipleChoice",
+    "question": "What does AVPlayerViewController provide?",
+    "options": [
+      "Just the player engine",
+      "A complete video player UI with controls",
+      "Only audio playback",
+      "Media recording functionality"
+    ],
+    "correctAnswer": "A complete video player UI with controls",
+    "explanation": "AVPlayerViewController provides a complete, ready-to-use video player interface with play/pause controls, scrubbing, fullscreen, and more.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-avkit-3",
+    "topicId": "avkit",
+    "type": "trueFalse",
+    "question": "AVPlayerItem represents a playable media asset.",
+    "options": ["True", "False"],
+    "correctAnswer": "True",
+    "explanation": "AVPlayerItem represents a playable media item. It's created from an AVAsset and used by AVPlayer for playback.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-avkit-4",
+    "topicId": "avkit",
+    "type": "multipleChoice",
+    "question": "How do you enable Picture-in-Picture in AVPlayerViewController?",
+    "options": [
+      "It's always enabled",
+      "Set allowsPictureInPicturePlayback = true",
+      "Use a special PiP class",
+      "PiP is not supported"
+    ],
+    "correctAnswer": "Set allowsPictureInPicturePlayback = true",
+    "explanation": "Enable PiP by setting `allowsPictureInPicturePlayback = true` on AVPlayerViewController. Also requires PiP capability in project settings.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-avkit-5",
+    "topicId": "avkit",
+    "type": "multipleChoice",
+    "question": "What is the relationship between AVKit and AVFoundation?",
+    "options": [
+      "They are the same",
+      "AVKit is built on top of AVFoundation",
+      "AVFoundation is built on top of AVKit",
+      "They are unrelated"
+    ],
+    "correctAnswer": "AVKit is built on top of AVFoundation",
+    "explanation": "AVKit provides high-level UI components (like AVPlayerViewController) built on top of AVFoundation, which provides low-level media processing.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-avkit-6",
+    "topicId": "avkit",
+    "type": "bugIdentification",
+    "question": "What's missing in this code?",
+    "options": [
+      "Nothing, it's correct",
+      "Need to set player on playerViewController",
+      "Need to import AVKit",
+      "Both B and C"
+    ],
+    "correctAnswer": "Both B and C",
+    "explanation": "You need to import AVKit and set the player on the playerViewController. The code is incomplete.",
+    "difficulty": "medium",
+    "codeSnippet": "let player = AVPlayer(url: videoURL)\nlet playerViewController = AVPlayerViewController()\n// Missing: playerViewController.player = player"
+  },
+  {
+    "id": "q-avkit-7",
+    "topicId": "avkit",
+    "type": "multipleChoice",
+    "question": "What property do you observe to know when AVPlayerItem is ready to play?",
+    "options": [
+      "isReady",
+      "status",
+      "canPlay",
+      "loaded"
+    ],
+    "correctAnswer": "status",
+    "explanation": "Observe the `status` property of AVPlayerItem. When it becomes `.readyToPlay`, the item is ready for playback.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-avkit-8",
+    "topicId": "avkit",
+    "type": "trueFalse",
+    "question": "AVPlayer can play streaming media (HLS, etc.) in addition to local files.",
+    "options": ["True", "False"],
+    "correctAnswer": "True",
+    "explanation": "AVPlayer supports both local files and streaming media including HLS (HTTP Live Streaming) and other streaming protocols.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-observable-1",
+    "topicId": "observable-observableobject",
+    "type": "multipleChoice",
+    "question": "What property wrapper should you use with @Observable?",
+    "options": [
+      "@StateObject",
+      "@ObservedObject",
+      "@State",
+      "@Published"
+    ],
+    "correctAnswer": "@State",
+    "explanation": "With @Observable, use @State (not @StateObject) to hold the observable instance. @StateObject is for ObservableObject types.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-observable-2",
+    "topicId": "observable-observableobject",
+    "type": "trueFalse",
+    "question": "You need @Published with @Observable classes.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "@Observable automatically tracks stored properties. You don't need @Published - that's only for ObservableObject.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-observable-3",
+    "topicId": "observable-observableobject",
+    "type": "multipleChoice",
+    "question": "What is the minimum iOS version for @Observable?",
+    "options": [
+      "iOS 13",
+      "iOS 15",
+      "iOS 17",
+      "iOS 18"
+    ],
+    "correctAnswer": "iOS 17",
+    "explanation": "@Observable macro requires iOS 17+ (and macOS 14+, etc.). ObservableObject works from iOS 13+.",
+    "difficulty": "easy",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-observable-4",
+    "topicId": "observable-observableobject",
+    "type": "bugIdentification",
+    "question": "What's wrong with this code?",
+    "options": [
+      "Nothing, it's correct",
+      "Should use @StateObject instead of @State",
+      "Should remove @Published",
+      "Both B and C"
+    ],
+    "correctAnswer": "Should remove @Published",
+    "explanation": "With @Observable, you don't need @Published. The macro automatically observes stored properties. @Published is only for ObservableObject.",
+    "difficulty": "medium",
+    "codeSnippet": "@Observable\nclass ViewModel {\n    @Published var count = 0  // Not needed!\n}"
+  },
+  {
+    "id": "q-observable-5",
+    "topicId": "observable-observableobject",
+    "type": "multipleChoice",
+    "question": "How do you pass an @Observable instance to a child view?",
+    "options": [
+      "Use @ObservedObject",
+      "Use @EnvironmentObject",
+      "Use plain var or @Bindable",
+      "Cannot pass @Observable instances"
+    ],
+    "correctAnswer": "Use plain var or @Bindable",
+    "explanation": "With @Observable, you can pass instances as plain `var` parameters. Use `@Bindable` if you need two-way binding.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-observable-6",
+    "topicId": "observable-observableobject",
+    "type": "trueFalse",
+    "question": "@Observable and ObservableObject can be used together in the same class.",
+    "options": ["True", "False"],
+    "correctAnswer": "False",
+    "explanation": "You should choose one approach. Mixing @Observable and ObservableObject in the same class is not recommended and can cause confusion.",
+    "difficulty": "medium",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-observable-7",
+    "topicId": "observable-observableobject",
+    "type": "multipleChoice",
+    "question": "What happens if you forget @State when using @Observable in the root view?",
+    "options": [
+      "Nothing, it works fine",
+      "The view model is recreated on each render",
+      "Compile error",
+      "Runtime crash"
+    ],
+    "correctAnswer": "The view model is recreated on each render",
+    "explanation": "Without @State, the view model instance is recreated every time the view renders, losing state. Always use @State for ownership.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  },
+  {
+    "id": "q-observable-8",
+    "topicId": "observable-observableobject",
+    "type": "multipleChoice",
+    "question": "Which provides better performance: @Observable or ObservableObject?",
+    "options": [
+      "ObservableObject",
+      "@Observable",
+      "They're the same",
+      "Depends on the use case"
+    ],
+    "correctAnswer": "@Observable",
+    "explanation": "@Observable generally provides better performance because it's a macro that expands at compile time, avoiding runtime overhead of Combine publishers.",
+    "difficulty": "hard",
+    "codeSnippet": null
+  }
+]

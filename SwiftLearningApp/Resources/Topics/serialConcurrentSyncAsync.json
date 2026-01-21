@@ -1,0 +1,77 @@
+{
+  "id": "serial-concurrent-sync-async",
+  "title": "Serial/Concurrent × Sync/Async Combinations",
+  "description": "Master all combinations of queue types and execution modes: serial-sync, serial-async, concurrent-sync, concurrent-async with detailed examples and use cases.",
+  "sections": [
+    {
+      "id": "overview",
+      "title": "The Four Combinations",
+      "content": "There are **four combinations** of queue type and execution mode:\n\n1. **Serial + Sync** - One task at a time, blocks current thread\n2. **Serial + Async** - One task at a time, doesn't block\n3. **Concurrent + Sync** - Multiple tasks, blocks current thread\n4. **Concurrent + Async** - Multiple tasks, doesn't block\n\nUnderstanding these combinations is crucial for proper concurrency in iOS development.",
+      "codeExampleIds": ["combinations-overview"]
+    },
+    {
+      "id": "serial-sync",
+      "title": "Serial Queue + Sync",
+      "content": "**Characteristics**:\n- Tasks execute one at a time (in order)\n- Blocks current thread until task completes\n- Thread-safe for shared resources\n- Can cause deadlocks if misused\n\n**Example**:\n```swift\nlet serialQueue = DispatchQueue(label: \"serial\")\n\nprint(\"Before\")\nserialQueue.sync {\n    print(\"Task 1\")\n    Thread.sleep(forTimeInterval: 1)\n}\nprint(\"After Task 1\")\n\nserialQueue.sync {\n    print(\"Task 2\")\n}\nprint(\"After Task 2\")\n\n// Output: Before, Task 1, After Task 1, Task 2, After Task 2\n```\n\n**Use Cases**:\n- Thread-safe access to shared resources\n- When you need to wait for result\n- Synchronizing access to data structures\n\n**Warning**: Never sync on main queue from main thread (deadlock)!",
+      "codeExampleIds": ["serial-sync-example"]
+    },
+    {
+      "id": "serial-async",
+      "title": "Serial Queue + Async",
+      "content": "**Characteristics**:\n- Tasks execute one at a time (in order)\n- Returns immediately, doesn't block\n- Thread-safe for shared resources\n- Most common pattern\n\n**Example**:\n```swift\nlet serialQueue = DispatchQueue(label: \"serial\")\n\nprint(\"Before\")\nserialQueue.async {\n    print(\"Task 1\")\n    Thread.sleep(forTimeInterval: 1)\n}\nprint(\"After Task 1 call\")  // Prints immediately!\n\nserialQueue.async {\n    print(\"Task 2\")\n}\nprint(\"After Task 2 call\")  // Prints immediately!\n\n// Output: Before, After Task 1 call, After Task 2 call, Task 1, Task 2\n```\n\n**Use Cases**:\n- Thread-safe data access\n- Ordered background processing\n- When order matters but blocking is not acceptable\n- Most common GCD pattern",
+      "codeExampleIds": ["serial-async-example"]
+    },
+    {
+      "id": "concurrent-sync",
+      "title": "Concurrent Queue + Sync",
+      "content": "**Characteristics**:\n- Tasks can run simultaneously (if available)\n- Blocks current thread until task completes\n- Faster than serial-sync for independent work\n- Still blocks, so use carefully\n\n**Example**:\n```swift\nlet concurrentQueue = DispatchQueue(label: \"concurrent\", attributes: .concurrent)\n\nprint(\"Before\")\nconcurrentQueue.sync {\n    print(\"Task 1\")\n    Thread.sleep(forTimeInterval: 1)\n}\nprint(\"After Task 1\")\n\nconcurrentQueue.sync {\n    print(\"Task 2\")\n}\nprint(\"After Task 2\")\n\n// Output: Before, Task 1, After Task 1, Task 2, After Task 2\n// Note: Still sequential because sync blocks\n```\n\n**Use Cases**:\n- Parallel work when you need to wait\n- Synchronizing multiple async operations\n- Less common, usually prefer async\n\n**Note**: Sync on concurrent queue still blocks, but tasks can run in parallel if multiple sync calls.",
+      "codeExampleIds": ["concurrent-sync-example"]
+    },
+    {
+      "id": "concurrent-async",
+      "title": "Concurrent Queue + Async",
+      "content": "**Characteristics**:\n- Tasks can run simultaneously\n- Returns immediately, doesn't block\n- Maximum parallelism\n- Need synchronization for shared resources\n\n**Example**:\n```swift\nlet concurrentQueue = DispatchQueue(label: \"concurrent\", attributes: .concurrent)\n\nprint(\"Before\")\nconcurrentQueue.async {\n    print(\"Task 1\")\n    Thread.sleep(forTimeInterval: 1)\n}\nprint(\"After Task 1 call\")\n\nconcurrentQueue.async {\n    print(\"Task 2\")\n}\nprint(\"After Task 2 call\")\n\n// Output: Before, After Task 1 call, After Task 2 call, Task 1/Task 2 (any order)\n```\n\n**Use Cases**:\n- Independent parallel work\n- Downloading multiple files\n- Processing multiple items\n- When order doesn't matter\n\n**Important**: Use barriers or other synchronization for shared mutable state!",
+      "codeExampleIds": ["concurrent-async-example"]
+    },
+    {
+      "id": "comparison-table",
+      "title": "Comparison Table",
+      "content": "**Quick Reference**:\n\n| Type | Execution | Blocks? | Order | Thread-Safe | Use Case |\n|------|-----------|---------|-------|-------------|----------|\n| Serial + Sync | One at a time | Yes | Guaranteed | Yes | Thread-safe access, wait for result |\n| Serial + Async | One at a time | No | Guaranteed | Yes | Thread-safe, non-blocking |\n| Concurrent + Sync | Parallel | Yes | Not guaranteed | No | Parallel work, need to wait |\n| Concurrent + Async | Parallel | No | Not guaranteed | No | Maximum parallelism |\n\n**Decision Tree**:\n1. Need to wait for result? → Use Sync\n2. Need order guaranteed? → Use Serial\n3. Need maximum speed? → Use Concurrent + Async\n4. Need thread safety? → Use Serial or add synchronization",
+      "codeExampleIds": ["comparison-table"]
+    },
+    {
+      "id": "real-world-examples",
+      "title": "Real-World Examples",
+      "content": "**Example 1: Thread-Safe Counter (Serial + Async)**:\n```swift\nclass SafeCounter {\n    private let queue = DispatchQueue(label: \"counter\")\n    private var count = 0\n    \n    func increment() {\n        queue.async { self.count += 1 }\n    }\n    \n    func getValue(completion: @escaping (Int) -> Void) {\n        queue.async { completion(self.count) }\n    }\n}\n```\n\n**Example 2: Parallel Downloads (Concurrent + Async)**:\n```swift\nlet urls = [url1, url2, url3]\nlet concurrentQueue = DispatchQueue(label: \"downloads\", attributes: .concurrent)\n\nfor url in urls {\n    concurrentQueue.async {\n        download(url)  // All download simultaneously\n    }\n}\n```\n\n**Example 3: Synchronized Access (Serial + Sync)**:\n```swift\nlet queue = DispatchQueue(label: \"data\")\nvar data: [String] = []\n\nfunc add(item: String) {\n    queue.sync { data.append(item) }  // Wait for completion\n}\n```",
+      "codeExampleIds": ["real-world-examples"]
+    },
+    {
+      "id": "common-mistakes",
+      "title": "Common Mistakes",
+      "content": "**1. Sync on Main from Main**:\n```swift\n// DEADLOCK!\nDispatchQueue.main.sync {\n    // Never executes\n}\n```\n\n**2. Sync on Same Queue**:\n```swift\nlet queue = DispatchQueue(label: \"queue\")\nqueue.sync {\n    queue.sync {  // DEADLOCK!\n    }\n}\n```\n\n**3. Assuming Order in Concurrent**:\n```swift\nconcurrentQueue.async { print(\"1\") }\nconcurrentQueue.async { print(\"2\") }\n// May print 2, 1\n```\n\n**4. Not Synchronizing Shared State**:\n```swift\nconcurrentQueue.async { self.data.append(\"A\") }  // Race condition!\nconcurrentQueue.async { self.data.append(\"B\") }\n```\n\n**5. Blocking Main Thread**:\n```swift\nDispatchQueue.main.sync {  // Blocks UI!\n    heavyComputation()\n}\n```",
+      "codeExampleIds": ["common-mistakes"]
+    }
+  ],
+  "codeExampleIds": [
+    "combinations-overview",
+    "serial-sync-example",
+    "serial-async-example",
+    "concurrent-sync-example",
+    "concurrent-async-example",
+    "comparison-table",
+    "real-world-examples",
+    "common-mistakes"
+  ],
+  "questionIds": [
+    "q-combinations-1",
+    "q-combinations-2",
+    "q-combinations-3",
+    "q-combinations-4",
+    "q-combinations-5",
+    "q-combinations-6",
+    "q-combinations-7",
+    "q-combinations-8",
+    "q-combinations-9",
+    "q-combinations-10"
+  ]
+}

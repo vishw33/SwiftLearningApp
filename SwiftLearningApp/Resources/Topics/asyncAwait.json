@@ -1,0 +1,54 @@
+{
+  "id": "async-await",
+  "title": "Async/Await - Swift 6 Migration",
+  "description": "Master the modern async/await pattern in Swift 6. Learn how to migrate from callbacks and Combine to structured concurrency.",
+  "sections": [
+    {
+      "id": "intro",
+      "title": "Introduction to Async/Await",
+      "content": "Async/await is Swift's modern approach to handling asynchronous operations. It provides a cleaner, more readable alternative to completion handlers and Combine publishers. In Swift 6, async/await becomes the recommended way to handle all asynchronous work.\n\nKey benefits:\n- Eliminates callback hell\n- Natural error handling with try/catch\n- Structured concurrency ensures proper task lifecycle\n- Better performance and resource management",
+      "codeExampleIds": ["async-basic", "async-error-handling"]
+    },
+    {
+      "id": "migration",
+      "title": "Migrating from Callbacks to Async/Await",
+      "content": "Migrating legacy code from completion handlers to async/await is straightforward. The key is using `withCheckedThrowingContinuation` to bridge the old callback-based APIs.\n\nSteps:\n1. Identify callback-based functions\n2. Wrap them in async functions using continuations\n3. Replace completion handler calls with await\n4. Update error handling to use try/catch",
+      "codeExampleIds": ["migration-callback", "migration-combine"]
+    },
+    {
+      "id": "tasks",
+      "title": "Task Management and Cancellation",
+      "content": "Tasks are the building blocks of structured concurrency. They represent a unit of asynchronous work. Understanding task creation, cancellation, and lifecycle is crucial.\n\nImportant concepts:\n- Task creation with Task { } and Task.detached\n- Task cancellation with Task.checkCancellation()\n- Task groups for parallel work\n- Task priorities and execution",
+      "codeExampleIds": ["task-basic", "task-cancellation", "task-group"]
+    },
+    {
+      "id": "error-handling",
+      "title": "Error Handling in Async Contexts",
+      "content": "Error handling in async functions uses Swift's standard try/catch mechanism. Functions that can throw errors are marked with `throws`, and async functions that throw are marked with `async throws`.\n\nBest practices:\n- Use specific error types\n- Handle errors at appropriate levels\n- Don't ignore errors silently\n- Use Result types when appropriate",
+      "codeExampleIds": ["async-error-handling", "async-result"]
+    },
+    {
+      "id": "checklist",
+      "title": "Migration Checklist",
+      "content": "When migrating to async/await:\n\n1. Enable Swift 6 language mode\n2. Identify all callback-based APIs\n3. Create async wrapper functions\n4. Update call sites to use await\n5. Replace Combine publishers with async sequences where appropriate\n6. Update tests to use async/await\n7. Test cancellation behavior\n8. Verify no data races or deadlocks",
+      "codeExampleIds": []
+    }
+  ],
+  "codeExampleIds": [
+    "async-basic",
+    "async-error-handling",
+    "migration-callback",
+    "migration-combine",
+    "task-basic",
+    "task-cancellation",
+    "task-group",
+    "async-result"
+  ],
+  "questionIds": [
+    "q-async-1",
+    "q-async-2",
+    "q-async-3",
+    "q-async-4",
+    "q-async-5"
+  ]
+}
