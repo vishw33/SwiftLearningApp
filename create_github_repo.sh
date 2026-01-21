@@ -7,9 +7,9 @@ REPO_NAME="SwiftLearningApp"
 DESCRIPTION="Interactive iOS app for learning Swift 6 essentials with Q&A quizzes, topics, and code examples"
 
 # Try to get token from environment or use placeholder
-TOKEN=${GITHUB_TOKEN:-"YOUR_GITHUB_TOKEN_HERE"}
+TOKEN=${GITHUB_TOKEN:-""}
 
-if [ "$TOKEN" = "YOUR_GITHUB_TOKEN_HERE" ]; then
+if [ -z "$TOKEN" ] || [ "$TOKEN" = "" ]; then
     echo "⚠️  GitHub token not found. Please create the repository manually:"
     echo ""
     echo "1. Go to https://github.com/new"

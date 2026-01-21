@@ -9,6 +9,20 @@ import Foundation
 import SwiftUI
 import Observation
 
+/// A view model that manages quiz state and question navigation.
+///
+/// This observable class handles loading questions, tracking user answers,
+/// calculating scores, and managing quiz flow. It provides computed
+/// properties for current question, progress, and completion status.
+///
+/// ## Question Navigation
+/// The view model supports forward and backward navigation through
+/// questions, allowing users to review and change answers before
+/// completing the quiz.
+///
+/// ## Score Calculation
+/// Scores are calculated based on correct answers when the quiz is
+/// finished, with results displayed in the results view.
 @Observable
 @MainActor
 class QuizViewModel {
@@ -40,6 +54,13 @@ class QuizViewModel {
         currentQuestionIndex >= questions.count - 1
     }
     
+    /// Loads questions for a specific topic.
+    ///
+    /// This method resets the quiz state and loads questions from
+    /// the content service. The quiz is reset to the first question
+    /// with all previous answers cleared.
+    ///
+    /// - Parameter topicId: The identifier of the topic to load questions for.
     func loadQuestions(for topicId: String) async {
         isLoading = true
         errorMessage = nil
@@ -57,6 +78,11 @@ class QuizViewModel {
         isLoading = false
     }
     
+    /// Records a user's answer for a specific question.
+    ///
+    /// - Parameters:
+    ///   - questionId: The identifier of the question.
+    ///   - answer: The answer provided by the user.
     func submitAnswer(questionId: String, answer: String) {
         userAnswers[questionId] = answer
     }
@@ -73,6 +99,12 @@ class QuizViewModel {
         }
     }
     
+    /// Calculates the quiz score based on correct answers.
+    ///
+    /// This method compares user answers with correct answers and
+    /// returns a score between 0.0 and 1.0.
+    ///
+    /// - Returns: The quiz score as a value between 0.0 and 1.0.
     func calculateScore() -> Double {
         guard !questions.isEmpty else { return 0.0 }
         

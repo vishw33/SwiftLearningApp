@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+/// The main view that displays detailed information about a topic.
+///
+/// This view shows topic title, description, sections, code examples,
+/// and provides access to quizzes for the topic.
 struct TopicDetailView: View {
     @Environment(LearningViewModel.self) private var viewModel
     let topic: Topic
@@ -21,79 +25,15 @@ struct TopicDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                // Header
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(topic.title)
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(AppColorTheme.primaryText)
-                        .shadow(color: topicColor.opacity(0.6), radius: 15, x: 0, y: 0)
-                    
-                    Text(topic.description)
-                        .font(.system(size: 16, weight: .regular))
-                        .foregroundColor(AppColorTheme.secondaryText)
-                }
-                .padding(.horizontal)
-                .padding(.top)
-                
-                // Sections
-                ForEach(topic.sections) { section in
-                    TopicSectionView(section: section, topicColor: topicColor)
-                }
-                
-                // Code Examples
-                if !codeExampleViewModel.codeExamples.isEmpty {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Code Examples")
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
-                            .foregroundColor(AppColorTheme.primaryText)
-                            .padding(.horizontal)
-                        
-                        ForEach(codeExampleViewModel.codeExamples) { example in
-                            CodeExampleCardView(example: example, action: {
-                                selectedExample = example
-                            }, topicColor: topicColor)
-                        }
-                    }
-                }
-                
-                // Start Quiz Button
-                Button(action: {
-                    showQuiz = true
-                }) {
-                    HStack {
-                        Image(systemName: "play.circle.fill")
-                        Text("Start Quiz")
-                            .font(.system(size: 18, weight: .semibold))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(
-                        LinearGradient(
-                            colors: [topicColor, topicColor.opacity(0.7)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .foregroundColor(.white)
-                    .cornerRadius(12)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(topicColor.opacity(0.6), lineWidth: 2)
-                    )
-                    .shadow(color: topicColor.opacity(0.5), radius: 20, x: 0, y: 8)
-                }
-                .padding(.horizontal)
-                .padding(.bottom)
+                headerView
+                sectionsView
+                codeExamplesView
+                startQuizButton
             }
         }
-        .background(
-            AppColorTheme.smoothGradientBackground
-                .ignoresSafeArea()
-        )
+        .standardBackground()
+        .standardNavigationBarStyle()
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarColorScheme(.dark, for: .navigationBar)
-        .toolbarBackground(AppColorTheme.darkSurface.opacity(0.95), for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
         .tint(topicColor)
         .task {
             await codeExampleViewModel.loadExamples(for: topic.id)
@@ -105,133 +45,59 @@ struct TopicDetailView: View {
             CodeExampleView(example: example, viewModel: codeExampleViewModel)
         }
     }
-}
-
-struct TopicSectionView: View {
-    let section: TopicSection
-    let topicColor: Color
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(section.title)
-                .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundColor(AppColorTheme.primaryText)
+    // MARK: - Subviews
+    
+    private var headerView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(topic.title)
+                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .primaryTextStyle(shadowColor: topicColor)
             
-            Text(section.content)
+            Text(topic.description)
                 .font(.system(size: 16, weight: .regular))
-                .foregroundColor(AppColorTheme.secondaryText)
-                .lineSpacing(4)
+                .secondaryTextStyle()
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(white: 0.15),
-                            Color(white: 0.08)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    topicColor.opacity(0.1),
-                                    topicColor.opacity(0.05)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(
-                    LinearGradient(
-                        colors: [topicColor.opacity(0.3), topicColor.opacity(0.1)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1
-                )
-        )
-        .shadow(color: topicColor.opacity(0.2), radius: 10, x: 0, y: 5)
         .padding(.horizontal)
+        .padding(.top)
     }
-}
-
-struct CodeExampleCardView: View {
-    let example: CodeExample
-    let action: () -> Void
-    let topicColor: Color
     
-    var body: some View {
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(example.title)
-                    .font(.system(size: 18, weight: .semibold, design: .rounded))
-                    .foregroundColor(AppColorTheme.primaryText)
+    private var sectionsView: some View {
+        ForEach(topic.sections) { section in
+            TopicSectionView(section: section, topicColor: topicColor)
+        }
+    }
+    
+    @ViewBuilder
+    private var codeExamplesView: some View {
+        if !codeExampleViewModel.codeExamples.isEmpty {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Code Examples")
+                    .titleStyle(size: 24)
+                    .padding(.horizontal)
                 
-                Text(example.description)
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(AppColorTheme.secondaryText)
-                    .lineLimit(2)
-                
-                HStack {
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(topicColor)
-                        .shadow(color: topicColor.opacity(0.5), radius: 5, x: 0, y: 0)
-                    Spacer()
+                ForEach(codeExampleViewModel.codeExamples) { example in
+                    CodeExampleCardView(example: example, action: {
+                        selectedExample = example
+                    }, topicColor: topicColor)
                 }
             }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color(white: 0.15),
-                                Color(white: 0.08)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        topicColor.opacity(0.1),
-                                        topicColor.opacity(0.05)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                    )
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(
-                        LinearGradient(
-                            colors: [topicColor.opacity(0.3), topicColor.opacity(0.1)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
-            )
-            .shadow(color: topicColor.opacity(0.2), radius: 10, x: 0, y: 5)
         }
-        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private var startQuizButton: some View {
+        Button(action: {
+            showQuiz = true
+        }) {
+            HStack {
+                Image(systemName: "play.circle.fill")
+                Text("Start Quiz")
+                    .font(.system(size: 18, weight: .semibold))
+            }
+            .primaryButtonStyle(color: topicColor)
+        }
         .padding(.horizontal)
+        .padding(.bottom)
     }
 }
 
