@@ -12,7 +12,65 @@
 
 *Scales beautifully from iPhone SE to iPad Pro — one codebase, all devices.*
 
-[Features](#-features) • [Architecture](#-architecture) • [Diagrams](#-architecture-diagrams) • [AI Development](#-built-with-cursor-ai) • [Setup](#-setup-instructions)
+[Features](#-features) • [Screenshots](#-screenshots) • [Architecture](#-architecture) • [Diagrams](#-architecture-diagrams) • [AI Development](#-built-with-cursor-ai) • [Setup](#-setup-instructions)
+
+</div>
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+
+### iPhone
+
+<table>
+  <tr>
+    <td align="center"><b>Topics Grid</b></td>
+    <td align="center"><b>Progress Dashboard</b></td>
+    <td align="center"><b>Community Challenges</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/iphone/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-01-22%20at%2019.34.15.png" width="200"/></td>
+    <td><img src="screenshots/iphone/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-01-22%20at%2019.34.28.png" width="200"/></td>
+    <td><img src="screenshots/iphone/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-01-22%20at%2019.34.34.png" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Topic Detail</b></td>
+    <td align="center"><b>Code Examples</b></td>
+    <td align="center"><b>Interactive Quiz</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/iphone/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-01-22%20at%2019.34.45.png" width="200"/></td>
+    <td><img src="screenshots/iphone/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-01-22%20at%2019.34.51.png" width="200"/></td>
+    <td><img src="screenshots/iphone/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-01-22%20at%2019.35.03.png" width="200"/></td>
+  </tr>
+</table>
+
+### iPad
+
+<table>
+  <tr>
+    <td align="center"><b>Topics Grid</b></td>
+    <td align="center"><b>Progress Dashboard</b></td>
+    <td align="center"><b>Topic Detail</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.40.39%20PM.png" width="280"/></td>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.40.57%20PM.png" width="280"/></td>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.41.14%20PM.png" width="280"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Code Examples</b></td>
+    <td align="center"><b>Interactive Quiz</b></td>
+    <td align="center"><b>Community Challenges</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.41.36%20PM.png" width="280"/></td>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.41.50%20PM.png" width="280"/></td>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.42.08%20PM.png" width="280"/></td>
+  </tr>
+</table>
 
 </div>
 
