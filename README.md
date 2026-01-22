@@ -56,9 +56,9 @@
     <td align="center"><b>Topic Detail</b></td>
   </tr>
   <tr>
-    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.40.39%20PM.png" width="280"/></td>
-    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.40.57%20PM.png" width="280"/></td>
-    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.41.14%20PM.png" width="280"/></td>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.40.39%E2%80%AFPM.png" width="280"/></td>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.40.57%E2%80%AFPM.png" width="280"/></td>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.41.14%E2%80%AFPM.png" width="280"/></td>
   </tr>
   <tr>
     <td align="center"><b>Code Examples</b></td>
@@ -66,9 +66,9 @@
     <td align="center"><b>Community Challenges</b></td>
   </tr>
   <tr>
-    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.41.36%20PM.png" width="280"/></td>
-    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.41.50%20PM.png" width="280"/></td>
-    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.42.08%20PM.png" width="280"/></td>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.41.36%E2%80%AFPM.png" width="280"/></td>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.41.50%E2%80%AFPM.png" width="280"/></td>
+    <td><img src="screenshots/ipad/Screenshot%202026-01-22%20at%207.42.08%E2%80%AFPM.png" width="280"/></td>
   </tr>
 </table>
 
