@@ -4,10 +4,13 @@
 
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)
 ![iOS](https://img.shields.io/badge/iOS-17.0+-blue.svg)
+![iPadOS](https://img.shields.io/badge/iPadOS-17.0+-purple.svg)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-5.0-green.svg)
 ![License](https://img.shields.io/badge/License-Educational-lightgrey.svg)
 
-**An interactive iOS app that teaches Swift 6 essentials with modern architecture, beautiful UI, and comprehensive learning features.**
+**An interactive iOS & iPadOS app that teaches Swift 6 essentials with modern architecture, beautiful adaptive UI, and comprehensive learning features.**
+
+*Scales beautifully from iPhone SE to iPad Pro — one codebase, all devices.*
 
 [Features](#-features) • [Architecture](#-architecture) • [Diagrams](#-architecture-diagrams) • [AI Development](#-built-with-cursor-ai) • [Setup](#-setup-instructions)
 
@@ -46,6 +49,14 @@
 - **Difficulty Levels**: Easy, Medium, Hard, Expert
 - **Solutions**: Detailed solutions with explanations
 - **Source Attribution**: Links back to original sources
+
+### 📱 Universal Design - iPhone & iPad
+- **Adaptive Layouts**: UI scales beautifully from iPhone SE to iPad Pro
+- **iPadOS Optimized**: Takes full advantage of larger iPad displays with expanded layouts
+- **Responsive Grids**: Topic grid automatically adjusts columns based on screen size
+- **Consistent Experience**: Same great learning experience across all Apple devices
+- **GeometryReader**: Dynamic layouts that adapt to any screen dimension
+- **No Compromises**: Full feature parity between iPhone and iPad versions
 
 ---
 
@@ -311,9 +322,10 @@ SwiftLearningApp/
    ```
 
 3. **Build and Run**
-   - Select iPhone 15 Simulator (or any iOS 17+ device)
+   - Select iPhone 15 or iPad Pro Simulator (or any iOS/iPadOS 17+ device)
    - Press `⌘R` to build and run
    - The app will launch automatically
+   - Try both iPhone and iPad simulators to see the adaptive UI in action!
 
 ### Detailed Setup
 
@@ -345,8 +357,9 @@ Ensure all JSON files in `Resources/` are added to the app bundle:
 ### SwiftUI
 - **NavigationStack**: Modern navigation (iOS 16+)
 - **TabView**: Multi-tab interface
-- **LazyVGrid**: Efficient grid layouts
-- **GeometryReader**: Responsive layouts
+- **LazyVGrid**: Efficient grid layouts with adaptive columns for iPhone/iPad
+- **GeometryReader**: Responsive layouts that scale seamlessly across all device sizes
+- **Adaptive UI**: Single codebase delivers optimized experiences for both iPhone and iPadOS
 
 ### Architecture
 - **MVVM Pattern**: Clean separation of concerns
@@ -381,6 +394,7 @@ Ensure all JSON files in `Resources/` are added to the app bundle:
 - **Completion Badges**: Checkmarks for completed topics
 - **Smooth Animations**: Spring animations for layout transitions
 - **Dynamic Colors**: Topic-specific color coding
+- **iPad Optimized**: Multi-column grid layout on larger iPad screens
 
 ### 2. Topic Detail
 - **Rich Content**: Multiple sections with detailed explanations
