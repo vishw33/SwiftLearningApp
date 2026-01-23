@@ -27,9 +27,9 @@ struct QuizView: View {
             }
             .standardNavigationBarStyle()
             .navigationTitle("Quiz")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationBarTitle()
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Close") {
                         dismiss()
                     }

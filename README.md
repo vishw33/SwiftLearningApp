@@ -5,12 +5,13 @@
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange.svg)
 ![iOS](https://img.shields.io/badge/iOS-17.0+-blue.svg)
 ![iPadOS](https://img.shields.io/badge/iPadOS-17.0+-purple.svg)
+![macOS](https://img.shields.io/badge/macOS-14.0+-red.svg)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-5.0-green.svg)
 ![License](https://img.shields.io/badge/License-Educational-lightgrey.svg)
 
-**An interactive iOS & iPadOS app that teaches Swift 6 essentials with modern architecture, beautiful adaptive UI, and comprehensive learning features.**
+**An interactive iOS, iPadOS & macOS app that teaches Swift 6 essentials with modern architecture, beautiful adaptive UI, and comprehensive learning features.**
 
-*Scales beautifully from iPhone SE to iPad Pro — one codebase, all devices.*
+*Scales beautifully from iPhone SE to iPad Pro to Mac — one codebase, all Apple devices.*
 
 [Features](#-features) • [Screenshots](#-screenshots) • [Architecture](#-architecture) • [Diagrams](#-architecture-diagrams) • [AI Development](#-built-with-cursor-ai) • [Setup](#-setup-instructions)
 
@@ -108,13 +109,14 @@
 - **Solutions**: Detailed solutions with explanations
 - **Source Attribution**: Links back to original sources
 
-### 📱 Universal Design - iPhone & iPad
-- **Adaptive Layouts**: UI scales beautifully from iPhone SE to iPad Pro
+### 📱 Universal Design - iPhone, iPad & Mac
+- **Adaptive Layouts**: UI scales beautifully from iPhone SE to iPad Pro to Mac
 - **iPadOS Optimized**: Takes full advantage of larger iPad displays with expanded layouts
+- **Native macOS Support**: Runs natively on Mac with full functionality
 - **Responsive Grids**: Topic grid automatically adjusts columns based on screen size
 - **Consistent Experience**: Same great learning experience across all Apple devices
 - **GeometryReader**: Dynamic layouts that adapt to any screen dimension
-- **No Compromises**: Full feature parity between iPhone and iPad versions
+- **No Compromises**: Full feature parity between iPhone, iPad, and Mac versions
 
 ---
 
@@ -364,6 +366,7 @@ SwiftLearningApp/
 ### Prerequisites
 - **Xcode 15.0+** (for Swift 6 support)
 - **iOS 17.0+** deployment target (for @Observable macro)
+- **macOS 14.0+** for running the Mac version
 - **macOS 13.0+** for development
 
 ### Quick Start
@@ -380,16 +383,17 @@ SwiftLearningApp/
    ```
 
 3. **Build and Run**
-   - Select iPhone 15 or iPad Pro Simulator (or any iOS/iPadOS 17+ device)
+   - Select iPhone 15, iPad Pro Simulator, or "My Mac" (or any iOS/iPadOS 17+ device)
    - Press `⌘R` to build and run
    - The app will launch automatically
-   - Try both iPhone and iPad simulators to see the adaptive UI in action!
+   - Try iPhone, iPad simulators, and Mac to see the adaptive UI in action!
 
 ### Detailed Setup
 
 #### 1. Verify Project Settings
-- Minimum Deployment: **iOS 17.0**
+- Minimum Deployment: **iOS 17.0** / **macOS 14.0**
 - Swift Language Version: **Swift 6**
+- Supported Platforms: **iOS, iPadOS, macOS**
 - All files added to target
 
 #### 2. Verify Resources
@@ -413,11 +417,12 @@ Ensure all JSON files in `Resources/` are added to the app bundle:
 - **Sendable Protocol**: Concurrency-safe types
 
 ### SwiftUI
-- **NavigationStack**: Modern navigation (iOS 16+)
+- **NavigationStack**: Modern navigation (iOS 16+ / macOS 13+)
 - **TabView**: Multi-tab interface
-- **LazyVGrid**: Efficient grid layouts with adaptive columns for iPhone/iPad
+- **LazyVGrid**: Efficient grid layouts with adaptive columns for all devices
 - **GeometryReader**: Responsive layouts that scale seamlessly across all device sizes
-- **Adaptive UI**: Single codebase delivers optimized experiences for both iPhone and iPadOS
+- **Adaptive UI**: Single codebase delivers optimized experiences for iPhone, iPad, and Mac
+- **Cross-Platform**: Platform-specific conditionals for iOS-only features
 
 ### Architecture
 - **MVVM Pattern**: Clean separation of concerns
@@ -571,7 +576,7 @@ extension View {
 - [ ] CloudKit sync for progress
 - [ ] Widget extensions
 - [ ] Watch app companion
-- [ ] macOS version
+- [x] ~~macOS version~~ ✅ Now supported!
 
 ---
 

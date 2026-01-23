@@ -32,8 +32,10 @@ struct TopicListView: View {
             }
             .standardNavigationBarStyle()
             .navigationTitle("Swift Learning")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationBarTitle()
+            #if os(iOS)
             .toolbar(isPaginatedLayout ? .hidden : .visible, for: .navigationBar)
+            #endif
             .navigationDestination(for: Topic.self) { topic in
                 TopicDetailView(topic: topic)
                     .transition(.move(edge: .trailing))

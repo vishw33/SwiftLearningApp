@@ -35,9 +35,9 @@ struct WebQuestionDetailView: View {
             }
             .standardNavigationBarStyle()
             .navigationTitle("Challenge")
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationBarTitle()
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
                         dismiss()
                     }
@@ -121,7 +121,7 @@ struct WebQuestionDetailView: View {
             .padding()
             .background(
                 Group {
-                    if #available(iOS 18.0, *) {
+                    if #available(iOS 18.0, macOS 15.0, *) {
                         AppColorTheme.meshGradientAccent
                     } else {
                         AppColorTheme.fallbackGradientAccent

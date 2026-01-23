@@ -24,9 +24,11 @@ extension View {
     /// ```
     func standardNavigationBarStyle() -> some View {
         self
+            #if os(iOS)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbarBackground(AppColorTheme.darkSurface.opacity(0.95), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            #endif
             .tint(AppColorTheme.exoticCyan)
     }
     
@@ -50,5 +52,31 @@ extension View {
                 AppColorTheme.smoothGradientBackground
                     .ignoresSafeArea()
             )
+    }
+    
+    /// Applies inline navigation bar title display mode on iOS.
+    ///
+    /// This modifier is a no-op on macOS where this API is not available.
+    ///
+    /// - Returns: A view with inline title display mode on iOS.
+    func inlineNavigationBarTitle() -> some View {
+        #if os(iOS)
+        self.navigationBarTitleDisplayMode(.inline)
+        #else
+        self
+        #endif
+    }
+    
+    /// Applies large navigation bar title display mode on iOS.
+    ///
+    /// This modifier is a no-op on macOS where this API is not available.
+    ///
+    /// - Returns: A view with large title display mode on iOS.
+    func largeNavigationBarTitle() -> some View {
+        #if os(iOS)
+        self.navigationBarTitleDisplayMode(.large)
+        #else
+        self
+        #endif
     }
 }

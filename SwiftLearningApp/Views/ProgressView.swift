@@ -31,7 +31,7 @@ struct ProgressView: View {
             }
             .standardNavigationBarStyle()
             .navigationTitle("Progress")
-            .navigationBarTitleDisplayMode(.large)
+            .largeNavigationBarTitle()
         }
     }
     

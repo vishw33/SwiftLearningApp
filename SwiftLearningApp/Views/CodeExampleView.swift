@@ -71,21 +71,23 @@ struct CodeExampleView: View {
                 }
             }
             .navigationTitle("Code Example")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbarBackground(AppColorTheme.darkSurface.opacity(0.95), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
+            #endif
             .tint(AppColorTheme.exoticCyan)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
                         dismiss()
                     }
                 }
                 
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button(action: {
-                        UIPasteboard.general.string = viewModel.getDisplayCode(for: example)
+                        ClipboardHelper.copy(viewModel.getDisplayCode(for: example))
                     }) {
                         Image(systemName: "doc.on.doc")
                     }

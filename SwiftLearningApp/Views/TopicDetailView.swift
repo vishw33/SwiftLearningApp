@@ -33,7 +33,7 @@ struct TopicDetailView: View {
         }
         .standardBackground()
         .standardNavigationBarStyle()
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationBarTitle()
         .tint(topicColor)
         .task {
             await codeExampleViewModel.loadExamples(for: topic.id)

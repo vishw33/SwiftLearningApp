@@ -148,8 +148,8 @@ struct AppColorTheme {
         }
     }
     
-    // MARK: - Mesh Gradients (iOS 18+)
-    @available(iOS 18.0, *)
+    // MARK: - Mesh Gradients (iOS 18+ / macOS 15+)
+    @available(iOS 18.0, macOS 15.0, *)
     static var meshGradientBackground: some View {
         MeshGradient(
             width: 3,
@@ -184,7 +184,7 @@ struct AppColorTheme {
         }
     }
     
-    @available(iOS 18.0, *)
+    @available(iOS 18.0, macOS 15.0, *)
     static var meshGradientCard: some View {
         MeshGradient(
             width: 2,
@@ -214,7 +214,7 @@ struct AppColorTheme {
         )
     }
     
-    @available(iOS 18.0, *)
+    @available(iOS 18.0, macOS 15.0, *)
     static var meshGradientAccent: some View {
         MeshGradient(
             width: 2,

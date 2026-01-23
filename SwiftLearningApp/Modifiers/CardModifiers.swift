@@ -28,7 +28,7 @@ struct CardStyle: ViewModifier {
         content
             .background(
                 ZStack {
-                    if #available(iOS 18.0, *) {
+                    if #available(iOS 18.0, macOS 15.0, *) {
                         AppColorTheme.meshGradientCard
                     } else {
                         AppColorTheme.fallbackGradientCard

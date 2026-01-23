@@ -28,9 +28,9 @@ struct WebQuestionsView: View {
             }
             .standardNavigationBarStyle()
             .navigationTitle("Challenges")
-            .navigationBarTitleDisplayMode(.large)
+            .largeNavigationBarTitle()
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .primaryAction) {
                     Button(action: {
                         Task {
                             await loadQuestions()
